@@ -19,7 +19,7 @@ public final class MaterialListClickGuiScreen extends Screen {
         renderer.renderEditor(drawContext);
 
         if (client != null) {
-            String help = "Left drag header  |  Right click collapse  |  H / ESC close";
+            String help = "Left drag header  |  Right click collapse  |  ESC close";
             drawContext.drawTextWithShadow(client.textRenderer, help, 8, height - 18, 0xFFD8CEE8);
         }
 
@@ -42,15 +42,6 @@ public final class MaterialListClickGuiScreen extends Screen {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         return renderer.editorMouseReleased(button)
                 || super.mouseReleased(mouseX, mouseY, button);
-    }
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (MaterialHudController.matchesEditKey(keyCode, scanCode)) {
-            close();
-            return true;
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override

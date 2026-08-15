@@ -1,0 +1,16 @@
+{
+  "not-a-good-mod-for-survival.gui.title.configs": "Not a Good Mod for Survival Settings",
+  "not-a-good-mod-for-survival.config.test.prettyName.testBoolean": "Test Boolean",
+  "not-a-good-mod-for-survival.config.test.comment.testBoolean": "A test boolean setting.",
+  "not-a-good-mod-for-survival.config.test.name.testBoolean": "Test Boolean",
+  "not-a-good-mod-for-survival.config.test.prettyName.testInteger": "Test Integer",
+  "not-a-good-mod-for-survival.config.test.comment.testInteger": "A test integer setting.",
+  "not-a-good-mod-for-survival.config.test.name.testInteger": "Test Integer",
+  "not-a-good-mod-for-survival.config.hotkeys.prettyName.openGuiSettings": "Open Settings",
+  "not-a-good-mod-for-survival.config.hotkeys.comment.openGuiSettings": "Open this project's settings screen.",
+  "not-a-good-mod-for-survival.config.hotkeys.name.openGuiSettings": "Open Settings",
+  "not-a-good-mod-for-survival.config.hotkeys.prettyName.editHudKey": "Edit HUD",
+  "not-a-good-mod-for-survival.config.hotkeys.comment.editHudKey": "Open the material HUD editor.",
+  "not-a-good-mod-for-survival.config.hotkeys.name.editHudKey": "Edit HUD",
+  "not-a-good-mod-for-survival.hotkeys.category": "Not a Good Mod for Survival Hotkeys"
+}
