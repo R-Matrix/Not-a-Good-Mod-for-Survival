@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "not-a-good-mod-for-survival",
+	"version": "${version}",
+	"name": "Not-a-Good-Mod-for-Survival",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/not-a-good-mod-for-survival/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival"
+		],
+		"client": [
+			"xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.NotAGoodModForSurvivalClient"
+		]
+	},
+	"mixins": [
+		"not-a-good-mod-for-survival.mixins.json",
+		{
+			"config": "not-a-good-mod-for-survival.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~1.21.4",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

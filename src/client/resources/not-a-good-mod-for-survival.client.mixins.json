@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"ExampleClientMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
