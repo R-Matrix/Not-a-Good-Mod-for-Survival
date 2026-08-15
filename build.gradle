@@ -1,14 +1,20 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 	id 'maven-publish'
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+	// Masa/Sakura Maven hosts Litematica and MaLiLib artifacts.
+	maven {
+		name = "MasaSakura"
+		url = "https://masa.dy.fi/maven/sakura-ryoko"
+	}
+
+	// Fallen-Breath Maven for compatible client-side mod libraries.
+	maven {
+		name = "FallenBreath"
+		url = "https://maven.fallenbreath.me/releases"
+	}
 }
 
 loom {
@@ -30,6 +36,10 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// Litematica and its required MaLiLib library (Minecraft 1.21.4, Fabric).
+	modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
+	modImplementation "fi.dy.masa.litematica:litematica-fabric-${project.minecraft_version}:${project.litematica_version}"
 }
 
 processResources {

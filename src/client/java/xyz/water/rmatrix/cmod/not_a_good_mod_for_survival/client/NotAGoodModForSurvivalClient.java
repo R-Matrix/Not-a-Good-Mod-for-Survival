@@ -1,10 +1,12 @@
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 
 public class NotAGoodModForSurvivalClient implements ClientModInitializer {
-	@Override
-	public void onInitializeClient() {
-		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-	}
+    @Override
+    public void onInitializeClient() {
+        MaterialHudController.initialize();
+        ClientTickEvents.END_CLIENT_TICK.register(MaterialHudController::tick);
+    }
 }
