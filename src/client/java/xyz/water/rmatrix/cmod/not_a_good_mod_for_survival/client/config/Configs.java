@@ -36,6 +36,23 @@ public final class Configs implements IConfigHandler {
         }
     }
 
+    public static final class Fireworks {
+        private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.fireworks";
+
+        /** -1 keeps vanilla's max-age/2 behavior; non-negative values are absolute particle ages in ticks. */
+        public static final ConfigInteger FADE_START_TICK = new ConfigInteger(
+                "fadeStartTick", -1, -1, 59,
+                "The tick at which firework spark color and alpha fading starts. -1 uses vanilla timing.")
+                .apply(CONFIG_KEY);
+
+        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
+                FADE_START_TICK
+        );
+
+        private Fireworks() {
+        }
+    }
+
     public static final Configs INSTANCE = new Configs();
 
     private Configs() {
@@ -50,6 +67,7 @@ public final class Configs implements IConfigHandler {
             if (element != null && element.isJsonObject()) {
                 JsonObject root = element.getAsJsonObject();
                 ConfigUtils.readConfigBase(root, "Test", Test.OPTIONS);
+                ConfigUtils.readConfigBase(root, "Fireworks", Fireworks.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
             } else {
                 NotAGoodModForSurvival.LOGGER.error(
@@ -68,6 +86,7 @@ public final class Configs implements IConfigHandler {
         if (Files.isDirectory(directory)) {
             JsonObject root = new JsonObject();
             ConfigUtils.writeConfigBase(root, "Test", Test.OPTIONS);
+            ConfigUtils.writeConfigBase(root, "Fireworks", Fireworks.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
             JsonUtils.writeJsonToFileAsPath(root, directory.resolve(CONFIG_FILE_NAME));
         } else {

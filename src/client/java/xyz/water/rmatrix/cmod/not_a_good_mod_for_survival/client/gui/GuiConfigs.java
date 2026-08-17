@@ -21,6 +21,7 @@ public final class GuiConfigs extends GuiConfigsBase {
     public List<ConfigOptionWrapper> getConfigs() {
         List<IConfigBase> configs = new ArrayList<>();
         configs.addAll(Configs.Test.OPTIONS);
+        configs.addAll(Configs.Fireworks.OPTIONS);
         configs.addAll(Hotkeys.HOTKEY_LIST);
         return ConfigOptionWrapper.createFor(configs);
     }
