@@ -1,5 +1,10 @@
 {
   "not-a-good-mod-for-survival.gui.title.configs": "Not a Good Mod for Survival Settings",
+  "not-a-good-mod-for-survival.gui.button.config_gui.all": "All",
+  "not-a-good-mod-for-survival.gui.button.config_gui.test": "Test",
+  "not-a-good-mod-for-survival.gui.button.config_gui.debug_render": "Debug Render",
+  "not-a-good-mod-for-survival.gui.button.config_gui.fireworks": "Fireworks",
+  "not-a-good-mod-for-survival.gui.button.config_gui.hotkeys": "Hotkeys",
   "not-a-good-mod-for-survival.config.test.prettyName.testBoolean": "Test Boolean",
   "not-a-good-mod-for-survival.config.test.comment.testBoolean": "A test boolean setting.",
   "not-a-good-mod-for-survival.config.test.name.testBoolean": "Test Boolean",
@@ -27,5 +32,6 @@
   "not-a-good-mod-for-survival.config.hotkeys.prettyName.editHudKey": "Edit HUD",
   "not-a-good-mod-for-survival.config.hotkeys.comment.editHudKey": "Open the material HUD editor.",
   "not-a-good-mod-for-survival.config.hotkeys.name.editHudKey": "Edit HUD",
-  "not-a-good-mod-for-survival.hotkeys.category": "Not a Good Mod for Survival Hotkeys"
+  "not-a-good-mod-for-survival.hotkeys.category": "Not a Good Mod for Survival Hotkeys",
+  "not-a-good-mod-for-survival.hotkeys.category.booleanConfigs": "Boolean Configuration Hotkeys"
 }

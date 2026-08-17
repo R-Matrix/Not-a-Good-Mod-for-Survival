@@ -6,13 +6,15 @@ import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigHandler;
-import fi.dy.masa.malilib.config.options.ConfigBoolean;
+import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
 import fi.dy.masa.malilib.config.options.ConfigInteger;
+import fi.dy.masa.malilib.hotkeys.IHotkey;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
 
@@ -22,8 +24,8 @@ public final class Configs implements IConfigHandler {
     private static final String TEST_KEY = NotAGoodModForSurvival.MOD_ID + ".config.test";
 
     public static final class Test {
-        public static final ConfigBoolean TEST_BOOLEAN = new ConfigBoolean(
-                "testBoolean", false, "A test boolean setting.").apply(TEST_KEY);
+        public static final ConfigBooleanHotkeyed TEST_BOOLEAN = new ConfigBooleanHotkeyed(
+                "testBoolean", false, "", "A test boolean setting.").apply(TEST_KEY);
         public static final ConfigInteger TEST_INTEGER = new ConfigInteger(
                 "testInteger", 0, 0, 100, "A test integer setting.").apply(TEST_KEY);
 
@@ -39,20 +41,20 @@ public final class Configs implements IConfigHandler {
     public static final class DebugRender {
         private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.debugRender";
 
-        public static final ConfigBoolean ENTITY_VIEW_ARROW = new ConfigBoolean(
-                "entityViewArrow", false,
+        public static final ConfigBooleanHotkeyed ENTITY_VIEW_ARROW = new ConfigBooleanHotkeyed(
+                "entityViewArrow", false, "",
                 "Add an arrowhead to the entity view vector when F3+B hitboxes are visible.")
                 .apply(CONFIG_KEY);
-        public static final ConfigBoolean THICK_CHUNK_BORDER_LINES = new ConfigBoolean(
-                "thickChunkBorderLines", false,
+        public static final ConfigBooleanHotkeyed THICK_CHUNK_BORDER_LINES = new ConfigBooleanHotkeyed(
+                "thickChunkBorderLines", false, "",
                 "Use thicker red and blue lines for the F3+G chunk-border overlay.")
                 .apply(CONFIG_KEY);
         public static final ConfigInteger CHUNK_BORDER_LINE_WIDTH = new ConfigInteger(
                 "chunkBorderLineWidth", 4, 1, 10,
                 "Width of the enhanced red and blue F3+G chunk-border lines, from 1 to 10.")
                 .apply(CONFIG_KEY);
-        public static final ConfigBoolean SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES = new ConfigBoolean(
-                "occludedCurrentSubchunkBlueLines", false,
+        public static final ConfigBooleanHotkeyed SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES = new ConfigBooleanHotkeyed(
+                "occludedCurrentSubchunkBlueLines", false, "",
                 "Keep the current subchunk's blue frame visible through blocks as thin lines.")
                 .apply(CONFIG_KEY);
 
@@ -83,6 +85,14 @@ public final class Configs implements IConfigHandler {
         private Fireworks() {
         }
     }
+
+    /** All boolean configuration toggles, registered so assigned keys can trigger them in-game. */
+    public static final List<IHotkey> BOOLEAN_HOTKEY_LIST = ImmutableList.of(
+            Test.TEST_BOOLEAN,
+            DebugRender.ENTITY_VIEW_ARROW,
+            DebugRender.THICK_CHUNK_BORDER_LINES,
+            DebugRender.SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES
+    );
 
     public static final Configs INSTANCE = new Configs();
 

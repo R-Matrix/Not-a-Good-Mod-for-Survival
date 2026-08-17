@@ -5,6 +5,7 @@ import fi.dy.masa.malilib.hotkeys.IKeybindManager;
 import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Hotkeys;
 
 /** Exposes this project's malilib hotkeys to the global keybind manager. */
@@ -23,6 +24,10 @@ public final class InputHandler implements IKeybindProvider {
         for (IHotkey hotkey : Hotkeys.HOTKEY_LIST) {
             manager.addKeybindToMap(hotkey.getKeybind());
         }
+
+        for (IHotkey hotkey : Configs.BOOLEAN_HOTKEY_LIST) {
+            manager.addKeybindToMap(hotkey.getKeybind());
+        }
     }
 
     @Override
@@ -31,5 +36,9 @@ public final class InputHandler implements IKeybindProvider {
                 NotAGoodModForSurvival.MOD_NAME,
                 NotAGoodModForSurvival.MOD_ID + ".hotkeys.category",
                 Hotkeys.HOTKEY_LIST);
+        manager.addHotkeysForCategory(
+                NotAGoodModForSurvival.MOD_NAME,
+                NotAGoodModForSurvival.MOD_ID + ".hotkeys.category.booleanConfigs",
+                Configs.BOOLEAN_HOTKEY_LIST);
     }
 }
