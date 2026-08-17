@@ -14,6 +14,7 @@ import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Hotkeys;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.GuiConfigs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.hud.MaterialHudController;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.input.InputHandler;
 
 /** Registers all project integrations after Minecraft has finished initializing. */

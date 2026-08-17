@@ -1,10 +1,12 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.hud;
 
 import fi.dy.masa.litematica.data.DataManager;
 import fi.dy.masa.litematica.materials.MaterialListBase;
 import fi.dy.masa.litematica.render.infohud.InfoHud;
 import fi.dy.masa.malilib.gui.GuiBase;
 import net.minecraft.client.MinecraftClient;
+
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.material_hud.MaterialListClickGuiScreen;
 
 /** Keeps the custom renderer attached to Litematica's current material list. */
 public final class MaterialHudController {

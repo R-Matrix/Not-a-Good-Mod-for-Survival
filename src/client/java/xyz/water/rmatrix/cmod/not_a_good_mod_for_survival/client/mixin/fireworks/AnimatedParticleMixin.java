@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.fireworks;
 
 import net.minecraft.client.particle.AnimatedParticle;
 import net.minecraft.client.particle.SpriteBillboardParticle;

@@ -36,6 +36,37 @@ public final class Configs implements IConfigHandler {
         }
     }
 
+    public static final class DebugRender {
+        private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.debugRender";
+
+        public static final ConfigBoolean ENTITY_VIEW_ARROW = new ConfigBoolean(
+                "entityViewArrow", false,
+                "Add an arrowhead to the entity view vector when F3+B hitboxes are visible.")
+                .apply(CONFIG_KEY);
+        public static final ConfigBoolean THICK_CHUNK_BORDER_LINES = new ConfigBoolean(
+                "thickChunkBorderLines", false,
+                "Use thicker red and blue lines for the F3+G chunk-border overlay.")
+                .apply(CONFIG_KEY);
+        public static final ConfigInteger CHUNK_BORDER_LINE_WIDTH = new ConfigInteger(
+                "chunkBorderLineWidth", 4, 1, 10,
+                "Width of the enhanced red and blue F3+G chunk-border lines, from 1 to 10.")
+                .apply(CONFIG_KEY);
+        public static final ConfigBoolean SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES = new ConfigBoolean(
+                "occludedCurrentSubchunkBlueLines", false,
+                "Keep the current subchunk's blue frame visible through blocks as thin lines.")
+                .apply(CONFIG_KEY);
+
+        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
+                ENTITY_VIEW_ARROW,
+                THICK_CHUNK_BORDER_LINES,
+                CHUNK_BORDER_LINE_WIDTH,
+                SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES
+        );
+
+        private DebugRender() {
+        }
+    }
+
     public static final class Fireworks {
         private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.fireworks";
 
@@ -67,6 +98,7 @@ public final class Configs implements IConfigHandler {
             if (element != null && element.isJsonObject()) {
                 JsonObject root = element.getAsJsonObject();
                 ConfigUtils.readConfigBase(root, "Test", Test.OPTIONS);
+                ConfigUtils.readConfigBase(root, "DebugRender", DebugRender.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Fireworks", Fireworks.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
             } else {
@@ -86,6 +118,7 @@ public final class Configs implements IConfigHandler {
         if (Files.isDirectory(directory)) {
             JsonObject root = new JsonObject();
             ConfigUtils.writeConfigBase(root, "Test", Test.OPTIONS);
+            ConfigUtils.writeConfigBase(root, "DebugRender", DebugRender.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Fireworks", Fireworks.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
             JsonUtils.writeJsonToFileAsPath(root, directory.resolve(CONFIG_FILE_NAME));

@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.hud;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +23,8 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.material_hud.MaterialListClickGuiScreen;
 
 /**
  * A compact material HUD using the dark panel, accent strip and glow-like layering

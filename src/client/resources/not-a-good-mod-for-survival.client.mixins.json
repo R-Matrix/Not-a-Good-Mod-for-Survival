@@ -3,8 +3,10 @@
 	"package": "xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"ExampleClientMixin",
-		"AnimatedParticleMixin"
+		"example.ExampleClientMixin",
+		"fireworks.AnimatedParticleMixin",
+		"entity_view.EntityRenderDispatcherMixin",
+		"chunk_border.ChunkBorderDebugRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

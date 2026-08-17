@@ -1,8 +1,10 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.material_hud;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.hud.OpenZenMaterialHudRenderer;
 
 /** OpenZen-style editor screen for the material-list panel. */
 public final class MaterialListClickGuiScreen extends Screen {

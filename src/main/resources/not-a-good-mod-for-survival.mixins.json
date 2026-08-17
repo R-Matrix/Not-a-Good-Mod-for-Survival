@@ -3,7 +3,7 @@
 	"package": "xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin"
+		"example.ExampleMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

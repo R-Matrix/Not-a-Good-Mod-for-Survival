@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.mixin;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.mixin.example;
 
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
