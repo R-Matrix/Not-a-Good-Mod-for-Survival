@@ -6,7 +6,8 @@
 		"example.ExampleClientMixin",
 		"fireworks.AnimatedParticleMixin",
 		"entity_view.EntityRenderDispatcherMixin",
-		"chunk_border.ChunkBorderDebugRendererMixin"
+		"chunk_border.ChunkBorderDebugRendererMixin",
+		"sign.SingleCharacterSignTextMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

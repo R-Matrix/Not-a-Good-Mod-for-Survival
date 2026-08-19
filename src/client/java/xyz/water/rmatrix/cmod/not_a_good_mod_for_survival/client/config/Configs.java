@@ -6,7 +6,9 @@ import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigHandler;
+import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
+import fi.dy.masa.malilib.config.options.ConfigDouble;
 import fi.dy.masa.malilib.config.options.ConfigInteger;
 import fi.dy.masa.malilib.hotkeys.IHotkey;
 import fi.dy.masa.malilib.util.FileUtils;
@@ -86,6 +88,42 @@ public final class Configs implements IConfigHandler {
         }
     }
 
+    public static final class Signs {
+        private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.signs";
+
+        public static final ConfigBoolean ENLARGE_SINGLE_CHARACTER = new ConfigBoolean(
+                "enlargeSingleCharacter", true,
+                "Enlarge and center a sign face when it contains exactly one visible character.")
+                .apply(CONFIG_KEY);
+        public static final ConfigDouble SINGLE_CHARACTER_SCALE = new ConfigDouble(
+                "singleCharacterScale", 2.0D, 1.0D, 4.0D, true,
+                "Scale applied to a sign face containing exactly one visible character, from 1.0 to 4.0.") {
+            @Override
+            protected double getClampedValue(double value) {
+                double steppedValue = Math.round(value * 10.0D) / 10.0D;
+                return super.getClampedValue(steppedValue);
+            }
+        }.apply(CONFIG_KEY);
+        public static final ConfigDouble SINGLE_CHARACTER_VERTICAL_OFFSET = new ConfigDouble(
+                "singleCharacterVerticalOffset", 0.0D, -8.0D, 8.0D, true,
+                "Vertical offset for a single-character sign face. Positive values move the character down, from -8.0 to 8.0.") {
+            @Override
+            protected double getClampedValue(double value) {
+                double steppedValue = Math.round(value * 10.0D) / 10.0D;
+                return super.getClampedValue(steppedValue);
+            }
+        }.apply(CONFIG_KEY);
+
+        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
+                ENLARGE_SINGLE_CHARACTER,
+                SINGLE_CHARACTER_SCALE,
+                SINGLE_CHARACTER_VERTICAL_OFFSET
+        );
+
+        private Signs() {
+        }
+    }
+
     /** All boolean configuration toggles, registered so assigned keys can trigger them in-game. */
     public static final List<IHotkey> BOOLEAN_HOTKEY_LIST = ImmutableList.of(
             Test.TEST_BOOLEAN,
@@ -110,6 +148,7 @@ public final class Configs implements IConfigHandler {
                 ConfigUtils.readConfigBase(root, "Test", Test.OPTIONS);
                 ConfigUtils.readConfigBase(root, "DebugRender", DebugRender.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Fireworks", Fireworks.OPTIONS);
+                ConfigUtils.readConfigBase(root, "Signs", Signs.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
             } else {
                 NotAGoodModForSurvival.LOGGER.error(
@@ -130,6 +169,7 @@ public final class Configs implements IConfigHandler {
             ConfigUtils.writeConfigBase(root, "Test", Test.OPTIONS);
             ConfigUtils.writeConfigBase(root, "DebugRender", DebugRender.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Fireworks", Fireworks.OPTIONS);
+            ConfigUtils.writeConfigBase(root, "Signs", Signs.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
             JsonUtils.writeJsonToFileAsPath(root, directory.resolve(CONFIG_FILE_NAME));
         } else {
