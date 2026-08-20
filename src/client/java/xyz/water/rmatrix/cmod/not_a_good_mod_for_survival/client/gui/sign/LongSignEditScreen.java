@@ -24,10 +24,6 @@ public final class LongSignEditScreen extends Screen {
     private LongSignTextArea textArea;
     private ButtonWidget doneButton;
     private ButtonWidget cancelButton;
-    private int areaLeft;
-    private int areaTop;
-    private int areaWidth;
-    private int areaHeight;
 
     public LongSignEditScreen(SignBlockEntity blockEntity, boolean front, boolean filtered) {
         super(Text.translatable("not-a-good-mod-for-survival.gui.long_sign_edit.title"));
@@ -38,11 +34,11 @@ public final class LongSignEditScreen extends Screen {
 
     @Override
     protected void init() {
-        this.areaWidth = Math.min(AREA_MAX_WIDTH, Math.max(320, this.width - SCREEN_MARGIN * 2));
-        this.areaHeight = Math.min(AREA_MAX_HEIGHT, Math.max(160, this.height - 80));
-        this.areaLeft = (this.width - this.areaWidth) / 2;
-        int totalHeight = this.areaHeight + AREA_BUTTON_GAP + 20;
-        this.areaTop = Math.max(SCREEN_MARGIN, (this.height - totalHeight) / 2);
+        int areaWidth = Math.min(AREA_MAX_WIDTH, Math.max(320, this.width - SCREEN_MARGIN * 2));
+        int areaHeight = Math.min(AREA_MAX_HEIGHT, Math.max(160, this.height - 80));
+        int areaLeft = (this.width - areaWidth) / 2;
+        int totalHeight = areaHeight + AREA_BUTTON_GAP + 20;
+        int areaTop = Math.max(SCREEN_MARGIN, (this.height - totalHeight) / 2);
 
         if (this.textArea == null) {
             this.textArea = new LongSignTextArea(
@@ -52,13 +48,13 @@ public final class LongSignEditScreen extends Screen {
             );
         }
         this.textArea.setBounds(
-                this.areaLeft,
-                this.areaTop,
-                this.areaWidth,
-                this.areaHeight
+                areaLeft,
+                areaTop,
+                areaWidth,
+                areaHeight
         );
 
-        int buttonY = this.areaTop + this.areaHeight + AREA_BUTTON_GAP;
+        int buttonY = areaTop + areaHeight + AREA_BUTTON_GAP;
         int buttonX = this.width / 2 - BUTTON_WIDTH - BUTTON_GAP / 2;
         this.doneButton = this.addDrawableChild(
                 ButtonWidget.builder(ScreenTexts.DONE, button -> this.submit())
