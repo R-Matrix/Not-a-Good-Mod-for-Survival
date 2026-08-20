@@ -1,10 +1,12 @@
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui;
 
 import fi.dy.masa.malilib.config.IConfigBase;
+import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptions;
 import fi.dy.masa.malilib.util.StringUtils;
 
 import java.util.ArrayList;
@@ -14,6 +16,8 @@ import java.util.Objects;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Hotkeys;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global.GlobalConfigRepository;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global.GlobalWidgetListConfigOptions;
 
 /** A compact malilib-style settings screen for this project. */
 public final class GuiConfigs extends GuiConfigsBase {
@@ -37,6 +41,19 @@ public final class GuiConfigs extends GuiConfigsBase {
         }
     }
 
+    @Override
+    protected WidgetListConfigOptions createListWidget(int listX, int listY) {
+        if (this.selectedTab == ConfigGuiTab.ALL &&
+                Configs.GlobalSearch.ENABLE_GLOBAL_MALILIB_SEARCH.getBooleanValue()) {
+            GlobalConfigRepository.rebuild();
+            return new GlobalWidgetListConfigOptions(
+                    listX, listY, this.getBrowserWidth(), this.getBrowserHeight(),
+                    this.getConfigWidth(), 0.0F, this);
+        }
+
+        return super.createListWidget(listX, listY);
+    }
+
     private int createButton(int x, int y, int width, ConfigGuiTab tab) {
         ButtonGeneric button = new ButtonGeneric(x, y, width, 20, tab.getDisplayName());
         button.setEnabled(this.selectedTab != tab);
@@ -56,6 +73,7 @@ public final class GuiConfigs extends GuiConfigsBase {
                 allConfigs.addAll(Configs.Signs.OPTIONS);
                 allConfigs.addAll(Configs.Bridging.OPTIONS);
                 allConfigs.addAll(Configs.Movement.OPTIONS);
+                allConfigs.addAll(Configs.GlobalSearch.OPTIONS);
                 allConfigs.addAll(Hotkeys.HOTKEY_LIST);
                 yield allConfigs;
             }
@@ -65,9 +83,27 @@ public final class GuiConfigs extends GuiConfigsBase {
             case SIGNS -> Configs.Signs.OPTIONS;
             case BRIDGING -> Configs.Bridging.OPTIONS;
             case MOVEMENT -> Configs.Movement.OPTIONS;
+            case GLOBAL_SEARCH -> Configs.GlobalSearch.OPTIONS;
             case HOTKEYS -> Hotkeys.HOTKEY_LIST;
         };
+
         return ConfigOptionWrapper.createFor(configs);
+    }
+
+    @Override
+    protected void onSettingsChanged() {
+        super.onSettingsChanged();
+
+        if (this.selectedTab == ConfigGuiTab.ALL &&
+                Configs.GlobalSearch.ENABLE_GLOBAL_MALILIB_SEARCH.getBooleanValue()) {
+            for (String modId : GlobalConfigRepository.getSourceModIds()) {
+                if (!NotAGoodModForSurvival.MOD_ID.equalsIgnoreCase(modId)) {
+                    ConfigManager.getInstance().onConfigsChanged(modId);
+                }
+            }
+
+            ((ConfigManager) ConfigManager.getInstance()).saveAllConfigs();
+        }
     }
 
     @Override
@@ -98,6 +134,7 @@ public final class GuiConfigs extends GuiConfigsBase {
         SIGNS("not-a-good-mod-for-survival.gui.button.config_gui.signs"),
         BRIDGING("not-a-good-mod-for-survival.gui.button.config_gui.bridging"),
         MOVEMENT("not-a-good-mod-for-survival.gui.button.config_gui.movement"),
+        GLOBAL_SEARCH("not-a-good-mod-for-survival.gui.button.config_gui.global_search"),
         HOTKEYS("not-a-good-mod-for-survival.gui.button.config_gui.hotkeys");
 
         private final String translationKey;

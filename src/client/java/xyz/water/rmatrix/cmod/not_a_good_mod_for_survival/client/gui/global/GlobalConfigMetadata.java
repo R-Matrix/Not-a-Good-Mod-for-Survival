@@ -1,0 +1,164 @@
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
+
+import fi.dy.masa.malilib.config.IConfigBase;
+import fi.dy.masa.malilib.hotkeys.IHotkey;
+import fi.dy.masa.malilib.hotkeys.IKeybind;
+import fi.dy.masa.malilib.util.KeyCodes;
+import fi.dy.masa.malilib.util.StringUtils;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.function.Supplier;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
+import fi.dy.masa.malilib.gui.GuiBase;
+
+/** Source and searchable metadata attached to a globally collected Malilib option. */
+public final class GlobalConfigMetadata {
+    private final String modId;
+    private final String modName;
+    private final Set<String> categories = new LinkedHashSet<>();
+    private Supplier<GuiBase> configScreenSupplier;
+    private final boolean showSource;
+    private IKeybind keybind;
+
+    public GlobalConfigMetadata(
+            String modId,
+            String modName,
+            String category,
+            Supplier<GuiBase> configScreenSupplier,
+            boolean showSource,
+            IKeybind keybind
+    ) {
+        this.modId = modId;
+        this.modName = modName;
+        this.categories.add(category);
+        this.configScreenSupplier = configScreenSupplier;
+        this.showSource = showSource;
+        this.keybind = keybind;
+    }
+
+    public String getModId() {
+        return this.modId;
+    }
+
+    public String getModName() {
+        return this.modName;
+    }
+
+    public String getCategory() {
+        return this.categories.stream()
+                .filter(category -> !"Configs".equalsIgnoreCase(category))
+                .findFirst()
+                .orElseGet(() -> this.categories.stream().findFirst().orElse("Configs"));
+    }
+
+    public void addCategory(String category) {
+        if (category != null && !category.isBlank()) {
+            this.categories.add(category.trim());
+        }
+    }
+
+    public boolean shouldShowSource() {
+        return this.showSource;
+    }
+
+    public Supplier<GuiBase> getConfigScreenSupplier() {
+        return this.configScreenSupplier;
+    }
+
+    public void setConfigScreenSupplier(Supplier<GuiBase> supplier) {
+        if (this.configScreenSupplier == null && supplier != null) {
+            this.configScreenSupplier = supplier;
+        }
+    }
+
+    public IKeybind getKeybind() {
+        return this.keybind;
+    }
+
+    public void setKeybind(IKeybind keybind) {
+        if (this.keybind == null && keybind != null) {
+            this.keybind = keybind;
+        }
+    }
+
+    public String getDisplayName(IConfigBase config) {
+        return config.getConfigGuiDisplayName();
+    }
+
+    public String getSourceDisplayName() {
+        return StringUtils.translate("not-a-good-mod-for-survival.gui.global_search.from") +
+                " " + this.modName + " - " + this.getCategory();
+    }
+
+    public boolean matchesMod(String query) {
+        String normalized = query.toLowerCase(Locale.ROOT);
+        return this.modId.toLowerCase(Locale.ROOT).contains(normalized) ||
+                this.modName.toLowerCase(Locale.ROOT).contains(normalized);
+    }
+
+    public boolean matchesCategory(String query) {
+        String normalized = query.toLowerCase(Locale.ROOT);
+        return this.categories.stream().anyMatch(category ->
+                category.toLowerCase(Locale.ROOT).contains(normalized));
+    }
+
+    public boolean matchesKey(String query) {
+        if (this.keybind == null) {
+            return false;
+        }
+
+        String wanted = normalizeKeyName(query);
+
+        for (Integer key : this.keybind.getKeys()) {
+            String keyName = KeyCodes.getNameForKey(key);
+
+            if (keyName != null && normalizeKeyName(keyName).equals(wanted)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean matchesText(IConfigBase config, String query) {
+        String normalized = query.toLowerCase(Locale.ROOT);
+        return contains(config.getName(), normalized) ||
+                contains(config.getConfigGuiDisplayName(), normalized) ||
+                contains(config.getTranslatedName(), normalized) ||
+                contains(config.getComment(), normalized) ||
+                (this.keybind != null && contains(this.keybind.getKeysDisplayString(), normalized));
+    }
+
+    public GuiBase createConfigScreen() {
+        if (this.configScreenSupplier == null) {
+            return null;
+        }
+
+        GuiBase screen;
+
+        try {
+            screen = this.configScreenSupplier.get();
+        } catch (RuntimeException ignored) {
+            return null;
+        }
+        Screen currentScreen = MinecraftClient.getInstance().currentScreen;
+
+        if (screen != null && screen != currentScreen && currentScreen instanceof GuiBase currentGui) {
+            screen.setParent(currentGui);
+        }
+
+        return screen;
+    }
+
+    private static boolean contains(String value, String query) {
+        return value != null && value.toLowerCase(Locale.ROOT).contains(query);
+    }
+
+    private static String normalizeKeyName(String keyName) {
+        return keyName.replaceAll("[^A-Za-z0-9]", "").toLowerCase(Locale.ROOT);
+    }
+
+}

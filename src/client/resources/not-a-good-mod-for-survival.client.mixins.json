@@ -12,7 +12,13 @@
 		"movement.LivingEntityMixin",
 		"sign.SingleCharacterSignTextMixin",
 		"sign.ClientPlayerEntityMixin",
-		"inventory.InventoryScreenMixin"
+		"inventory.InventoryScreenMixin",
+		"global.ConfigManagerMixin",
+		"global.GuiBaseMixin",
+		"global.GuiBaseAccessor",
+		"global.ButtonBaseAccessor",
+		"global.WidgetListBaseMixin",
+		"global.WidgetConfigOptionMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
