@@ -8,6 +8,8 @@
 		"entity_view.EntityRenderDispatcherMixin",
 		"chunk_border.ChunkBorderDebugRendererMixin",
 		"bridging.MinecraftClientMixin",
+		"movement.ClientPlayerEntityMixin",
+		"movement.LivingEntityMixin",
 		"sign.SingleCharacterSignTextMixin",
 		"sign.ClientPlayerEntityMixin",
 		"inventory.InventoryScreenMixin"

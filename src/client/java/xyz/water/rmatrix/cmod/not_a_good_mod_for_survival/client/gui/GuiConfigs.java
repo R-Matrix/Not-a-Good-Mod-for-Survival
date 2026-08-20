@@ -55,6 +55,7 @@ public final class GuiConfigs extends GuiConfigsBase {
                 allConfigs.addAll(Configs.Fireworks.OPTIONS);
                 allConfigs.addAll(Configs.Signs.OPTIONS);
                 allConfigs.addAll(Configs.Bridging.OPTIONS);
+                allConfigs.addAll(Configs.Movement.OPTIONS);
                 allConfigs.addAll(Hotkeys.HOTKEY_LIST);
                 yield allConfigs;
             }
@@ -63,6 +64,7 @@ public final class GuiConfigs extends GuiConfigsBase {
             case FIREWORKS -> Configs.Fireworks.OPTIONS;
             case SIGNS -> Configs.Signs.OPTIONS;
             case BRIDGING -> Configs.Bridging.OPTIONS;
+            case MOVEMENT -> Configs.Movement.OPTIONS;
             case HOTKEYS -> Hotkeys.HOTKEY_LIST;
         };
         return ConfigOptionWrapper.createFor(configs);
@@ -95,6 +97,7 @@ public final class GuiConfigs extends GuiConfigsBase {
         FIREWORKS("not-a-good-mod-for-survival.gui.button.config_gui.fireworks"),
         SIGNS("not-a-good-mod-for-survival.gui.button.config_gui.signs"),
         BRIDGING("not-a-good-mod-for-survival.gui.button.config_gui.bridging"),
+        MOVEMENT("not-a-good-mod-for-survival.gui.button.config_gui.movement"),
         HOTKEYS("not-a-good-mod-for-survival.gui.button.config_gui.hotkeys");
 
         private final String translationKey;

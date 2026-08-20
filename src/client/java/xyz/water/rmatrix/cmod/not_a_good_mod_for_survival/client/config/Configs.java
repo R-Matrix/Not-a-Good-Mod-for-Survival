@@ -150,6 +150,22 @@ public final class Configs implements IConfigHandler {
         }
     }
 
+    public static final class Movement {
+        private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.movement";
+
+        public static final ConfigBoolean MORE_AGGRESSIVE_SPRINT = new ConfigBoolean(
+                "moreAggressiveSprint", false,
+                "Keep sprinting while moving forward even when hunger would normally prevent sprinting.")
+                .apply(CONFIG_KEY);
+
+        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
+                MORE_AGGRESSIVE_SPRINT
+        );
+
+        private Movement() {
+        }
+    }
+
     /** All boolean configuration toggles, registered so assigned keys can trigger them in-game. */
     public static final List<IHotkey> BOOLEAN_HOTKEY_LIST = ImmutableList.of(
             Test.TEST_BOOLEAN,
@@ -176,6 +192,7 @@ public final class Configs implements IConfigHandler {
                 ConfigUtils.readConfigBase(root, "Fireworks", Fireworks.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Signs", Signs.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Bridging", Bridging.OPTIONS);
+                ConfigUtils.readConfigBase(root, "Movement", Movement.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
             } else {
                 NotAGoodModForSurvival.LOGGER.error(
@@ -198,6 +215,7 @@ public final class Configs implements IConfigHandler {
             ConfigUtils.writeConfigBase(root, "Fireworks", Fireworks.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Signs", Signs.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Bridging", Bridging.OPTIONS);
+            ConfigUtils.writeConfigBase(root, "Movement", Movement.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
             JsonUtils.writeJsonToFileAsPath(root, directory.resolve(CONFIG_FILE_NAME));
         } else {
