@@ -134,6 +134,22 @@ public final class Configs implements IConfigHandler {
         }
     }
 
+    public static final class Bridging {
+        private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.bridging";
+
+        public static final ConfigBoolean ENABLE_FORWARD_BRIDGING = new ConfigBoolean(
+                "enableForwardBridging", false,
+                "Place a block in the horizontal space directly in front of the block below you when aiming at it.")
+                .apply(CONFIG_KEY);
+
+        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
+                ENABLE_FORWARD_BRIDGING
+        );
+
+        private Bridging() {
+        }
+    }
+
     /** All boolean configuration toggles, registered so assigned keys can trigger them in-game. */
     public static final List<IHotkey> BOOLEAN_HOTKEY_LIST = ImmutableList.of(
             Test.TEST_BOOLEAN,
@@ -159,6 +175,7 @@ public final class Configs implements IConfigHandler {
                 ConfigUtils.readConfigBase(root, "DebugRender", DebugRender.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Fireworks", Fireworks.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Signs", Signs.OPTIONS);
+                ConfigUtils.readConfigBase(root, "Bridging", Bridging.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
             } else {
                 NotAGoodModForSurvival.LOGGER.error(
@@ -180,6 +197,7 @@ public final class Configs implements IConfigHandler {
             ConfigUtils.writeConfigBase(root, "DebugRender", DebugRender.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Fireworks", Fireworks.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Signs", Signs.OPTIONS);
+            ConfigUtils.writeConfigBase(root, "Bridging", Bridging.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
             JsonUtils.writeJsonToFileAsPath(root, directory.resolve(CONFIG_FILE_NAME));
         } else {
