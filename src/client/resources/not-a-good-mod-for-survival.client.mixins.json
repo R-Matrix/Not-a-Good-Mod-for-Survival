@@ -8,6 +8,7 @@
 		"entity_view.EntityRenderDispatcherMixin",
 		"chunk_border.ChunkBorderDebugRendererMixin",
 		"sign.SingleCharacterSignTextMixin",
+		"sign.ClientPlayerEntityMixin",
 		"inventory.InventoryScreenMixin"
 	],
 	"injectors": {

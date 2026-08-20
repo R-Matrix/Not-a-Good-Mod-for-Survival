@@ -118,11 +118,16 @@ public final class Configs implements IConfigHandler {
                 return super.getClampedValue(steppedValue);
             }
         }.apply(CONFIG_KEY);
+        public static final ConfigBoolean ENABLE_LONG_SIGN_TEXT = new ConfigBoolean(
+                "enableLongSignText", false,
+                "Open a large, material-independent editor for long sign messages.")
+                .apply(CONFIG_KEY);
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 ENLARGE_SINGLE_CHARACTER,
                 SINGLE_CHARACTER_SCALE,
-                SINGLE_CHARACTER_VERTICAL_OFFSET
+                SINGLE_CHARACTER_VERTICAL_OFFSET,
+                ENABLE_LONG_SIGN_TEXT
         );
 
         private Signs() {
