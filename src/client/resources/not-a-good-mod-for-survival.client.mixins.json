@@ -7,7 +7,8 @@
 		"fireworks.AnimatedParticleMixin",
 		"entity_view.EntityRenderDispatcherMixin",
 		"chunk_border.ChunkBorderDebugRendererMixin",
-		"sign.SingleCharacterSignTextMixin"
+		"sign.SingleCharacterSignTextMixin",
+		"inventory.InventoryScreenMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

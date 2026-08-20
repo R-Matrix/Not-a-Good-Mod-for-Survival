@@ -59,12 +59,17 @@ public final class Configs implements IConfigHandler {
                 "occludedCurrentSubchunkBlueLines", false, "",
                 "Keep the current subchunk's blue frame visible through blocks as thin lines.")
                 .apply(CONFIG_KEY);
+        public static final ConfigBooleanHotkeyed HIDE_INVENTORY_PLAYER_MODEL_HITBOX = new ConfigBooleanHotkeyed(
+                "hideInventoryPlayerModelHitbox", false, "",
+                "Hide the player's collision box while rendering the player model in the inventory screen.")
+                .apply(CONFIG_KEY);
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 ENTITY_VIEW_ARROW,
                 THICK_CHUNK_BORDER_LINES,
                 CHUNK_BORDER_LINE_WIDTH,
-                SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES
+                SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES,
+                HIDE_INVENTORY_PLAYER_MODEL_HITBOX
         );
 
         private DebugRender() {
@@ -91,8 +96,8 @@ public final class Configs implements IConfigHandler {
     public static final class Signs {
         private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.signs";
 
-        public static final ConfigBoolean ENLARGE_SINGLE_CHARACTER = new ConfigBoolean(
-                "enlargeSingleCharacter", true,
+        public static final ConfigBooleanHotkeyed ENLARGE_SINGLE_CHARACTER = new ConfigBooleanHotkeyed(
+                "enlargeSingleCharacter", true, "",
                 "Enlarge and center a sign face when it contains exactly one visible character.")
                 .apply(CONFIG_KEY);
         public static final ConfigDouble SINGLE_CHARACTER_SCALE = new ConfigDouble(
