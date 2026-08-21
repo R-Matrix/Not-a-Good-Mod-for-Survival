@@ -68,8 +68,8 @@ public final class GlobalConfigRepository {
 
             if (screen instanceof GuiConfigsBase configScreen) {
                 if (!ReflectiveGlobalConfigTabCollector.collect(configScreen, page -> addScreenConfigs(
-                        byConfig, modInfo, supplier, page.category(), page.options()))) {
-                    addScreenConfigs(byConfig, modInfo, supplier, "Configs", configScreen.getConfigs());
+                        byConfig, modInfo, supplier, page.category(), page.options(), page.tabTarget()))) {
+                    addScreenConfigs(byConfig, modInfo, supplier, "Configs", configScreen.getConfigs(), null);
                 }
             }
         }
@@ -97,7 +97,8 @@ public final class GlobalConfigRepository {
             ModInfo modInfo,
             Supplier<GuiBase> supplier,
             String initialCategory,
-            List<ConfigOptionWrapper> wrappers
+            List<ConfigOptionWrapper> wrappers,
+            GlobalConfigTabTarget tabTarget
     ) {
         String category = initialCategory == null || initialCategory.isBlank()
                 ? "Configs" : initialCategory;
@@ -114,7 +115,7 @@ public final class GlobalConfigRepository {
                     IConfigBase config = wrapper.getConfig();
                     addScreenConfig(byConfig, modInfo.getModId(), modInfo.getModName(), category,
                             supplier, !LOCAL_MOD_ID.equalsIgnoreCase(modInfo.getModId()), config,
-                            getKeybind(config));
+                            getKeybind(config), tabTarget);
                 }
             }
         } catch (RuntimeException exception) {
@@ -143,7 +144,7 @@ public final class GlobalConfigRepository {
 
         if (existing == null) {
             GlobalConfigMetadata metadata = new GlobalConfigMetadata(
-                    modId, modName, category, supplier, showSource, keybind);
+                    modId, modName, category, supplier, showSource, keybind, null);
             byConfig.put(uniqueKey, new GlobalConfigOptionWrapper(config, metadata));
             return;
         }
@@ -167,7 +168,8 @@ public final class GlobalConfigRepository {
             Supplier<GuiBase> supplier,
             boolean showSource,
             IConfigBase config,
-            IKeybind keybind
+            IKeybind keybind,
+            GlobalConfigTabTarget tabTarget
     ) {
         if (config == null || modId == null || modName == null) {
             return;
@@ -175,7 +177,7 @@ public final class GlobalConfigRepository {
 
         String uniqueKey = modId.toLowerCase(Locale.ROOT) + "\u0000" + config.getName().toLowerCase(Locale.ROOT);
         GlobalConfigMetadata metadata = new GlobalConfigMetadata(
-                modId, modName, category, supplier, showSource, keybind);
+                modId, modName, category, supplier, showSource, keybind, tabTarget);
 
         // A later tab is usually more specific than an "All" tab, so preserve its source.
         byConfig.put(uniqueKey, new GlobalConfigOptionWrapper(config, metadata));

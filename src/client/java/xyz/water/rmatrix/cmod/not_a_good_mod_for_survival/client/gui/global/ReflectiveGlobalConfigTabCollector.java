@@ -76,7 +76,8 @@ final class ReflectiveGlobalConfigTabCollector {
                     state.set(tab);
 
                     List<ConfigOptionWrapper> options = screen.getConfigs();
-                    pageConsumer.accept(new GlobalConfigTabPage(getTabName(tab), options));
+                    pageConsumer.accept(new GlobalConfigTabPage(
+                            getTabName(tab), options, state.createTarget(tab)));
                     collected = true;
                 } catch (ReflectiveOperationException | RuntimeException exception) {
                     NotAGoodModForSurvival.LOGGER.debug(
@@ -333,6 +334,8 @@ final class ReflectiveGlobalConfigTabCollector {
         Enum<?> get() throws ReflectiveOperationException;
 
         void set(Enum<?> tab) throws ReflectiveOperationException;
+
+        GlobalConfigTabTarget createTarget(Enum<?> tab);
     }
 
     private record FieldTabState(Field field, Object target) implements TabState {
@@ -344,6 +347,27 @@ final class ReflectiveGlobalConfigTabCollector {
         @Override
         public void set(Enum<?> tab) throws IllegalAccessException {
             this.field.set(this.target, tab);
+        }
+
+        @Override
+        public GlobalConfigTabTarget createTarget(Enum<?> tab) {
+            return screen -> {
+                Object target = Modifier.isStatic(this.field.getModifiers()) ? null : screen;
+
+                if (target != null && !this.field.getDeclaringClass().isInstance(target)) {
+                    return false;
+                }
+
+                try {
+                    this.field.set(target, tab);
+                    return true;
+                } catch (ReflectiveOperationException | RuntimeException exception) {
+                    NotAGoodModForSurvival.LOGGER.debug(
+                            "Could not select config tab {} on {}.",
+                            tab.name(), screen.getClass().getName(), exception);
+                    return false;
+                }
+            };
         }
     }
 
@@ -357,9 +381,34 @@ final class ReflectiveGlobalConfigTabCollector {
         public void set(Enum<?> tab) throws IllegalAccessException, InvocationTargetException {
             this.setter.invoke(this.target, tab);
         }
+
+        @Override
+        public GlobalConfigTabTarget createTarget(Enum<?> tab) {
+            return screen -> {
+                Object target = Modifier.isStatic(this.setter.getModifiers()) ? null : screen;
+
+                if (target != null && !this.setter.getDeclaringClass().isInstance(target)) {
+                    return false;
+                }
+
+                try {
+                    this.setter.invoke(target, tab);
+                    return true;
+                } catch (ReflectiveOperationException | RuntimeException exception) {
+                    NotAGoodModForSurvival.LOGGER.debug(
+                            "Could not select config tab {} on {}.",
+                            tab.name(), screen.getClass().getName(), exception);
+                    return false;
+                }
+            };
+        }
     }
 
-    record GlobalConfigTabPage(String category, List<ConfigOptionWrapper> options) {
+    record GlobalConfigTabPage(
+            String category,
+            List<ConfigOptionWrapper> options,
+            GlobalConfigTabTarget tabTarget
+    ) {
         GlobalConfigTabPage {
             category = category == null || category.isBlank() ? "Configs" : category.trim();
             options = List.copyOf(options);

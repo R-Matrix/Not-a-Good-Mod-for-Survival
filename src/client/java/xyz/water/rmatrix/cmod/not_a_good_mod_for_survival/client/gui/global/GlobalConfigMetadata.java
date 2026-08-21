@@ -23,6 +23,7 @@ public final class GlobalConfigMetadata {
     private Supplier<GuiBase> configScreenSupplier;
     private final boolean showSource;
     private IKeybind keybind;
+    private GlobalConfigTabTarget configTabTarget;
 
     public GlobalConfigMetadata(
             String modId,
@@ -30,7 +31,8 @@ public final class GlobalConfigMetadata {
             String category,
             Supplier<GuiBase> configScreenSupplier,
             boolean showSource,
-            IKeybind keybind
+            IKeybind keybind,
+            GlobalConfigTabTarget configTabTarget
     ) {
         this.modId = modId;
         this.modName = modName;
@@ -38,6 +40,7 @@ public final class GlobalConfigMetadata {
         this.configScreenSupplier = configScreenSupplier;
         this.showSource = showSource;
         this.keybind = keybind;
+        this.configTabTarget = configTabTarget;
     }
 
     public String getModId() {
@@ -86,6 +89,16 @@ public final class GlobalConfigMetadata {
     public void setKeybind(IKeybind keybind) {
         if (this.keybind == null && keybind != null) {
             this.keybind = keybind;
+        }
+    }
+
+    public GlobalConfigTabTarget getConfigTabTarget() {
+        return this.configTabTarget;
+    }
+
+    public void setConfigTabTarget(GlobalConfigTabTarget configTabTarget) {
+        if (this.configTabTarget == null && configTabTarget != null) {
+            this.configTabTarget = configTabTarget;
         }
     }
 

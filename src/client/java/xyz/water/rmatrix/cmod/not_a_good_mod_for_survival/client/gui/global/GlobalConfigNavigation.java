@@ -7,11 +7,11 @@ import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptions;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
 
 import java.util.List;
 import java.util.Locale;
 
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global.ButtonBaseAccessor;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global.GuiBaseAccessor;
 
@@ -21,8 +21,10 @@ public final class GlobalConfigNavigation {
     private static IConfigBase targetConfig;
     private static String targetConfigName;
     private static String targetCategory;
+    private static GlobalConfigTabTarget targetTab;
     private static boolean active;
     private static boolean targetFound;
+    private static boolean targetTabSelected;
 
     private GlobalConfigNavigation() {
     }
@@ -36,6 +38,15 @@ public final class GlobalConfigNavigation {
         targetConfig = config;
         targetConfigName = config.getName();
         targetCategory = metadata.getCategory();
+        targetTab = metadata.getConfigTabTarget();
+        targetTabSelected = targetTab != null && targetTab.select(screen);
+
+        if (targetTab != null && !targetTabSelected) {
+            NotAGoodModForSurvival.LOGGER.debug(
+                    "Could not select the indexed config tab for {}. Falling back to the category button.",
+                    metadata.getModId());
+        }
+
         targetFound = false;
         active = true;
     }
@@ -64,7 +75,8 @@ public final class GlobalConfigNavigation {
 
     /** Called after setScreen() so subclass-created category buttons are available. */
     public static synchronized void afterScreenOpened(GuiBase screen) {
-        if (!active || targetScreen != screen || targetFound || !(screen instanceof GuiConfigsBase)) {
+        if (!active || targetScreen != screen || targetFound || targetTabSelected ||
+                !(screen instanceof GuiConfigsBase)) {
             return;
         }
 
@@ -125,7 +137,9 @@ public final class GlobalConfigNavigation {
         targetConfig = null;
         targetConfigName = null;
         targetCategory = null;
+        targetTab = null;
         targetFound = false;
+        targetTabSelected = false;
         active = false;
     }
 }

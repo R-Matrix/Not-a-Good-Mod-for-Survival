@@ -16,7 +16,6 @@ public final class GlobalWidgetConfigOption extends WidgetConfigOption {
     static final int MATCH_BACKGROUND = 0xD0D99000;
     private static final int SOURCE_COLOR = 0xFF808080;
 
-    private final int labelWidth;
     private final GlobalConfigOptionWrapper globalWrapper;
     private final String configName;
     private final List<String> highlightTerms;
@@ -35,7 +34,6 @@ public final class GlobalWidgetConfigOption extends WidgetConfigOption {
             List<String> highlightTerms
     ) {
         super(x, y, width, height, labelWidth, configWidth, wrapper, listIndex, host, parent);
-        this.labelWidth = labelWidth;
         this.globalWrapper = wrapper;
         this.configName = wrapper.getConfig().getConfigGuiDisplayName();
         this.highlightTerms = List.copyOf(highlightTerms);
@@ -99,27 +97,30 @@ public final class GlobalWidgetConfigOption extends WidgetConfigOption {
 
     private void renderSource(DrawContext drawContext) {
         int sourceX = this.x;
-        int sourceRight = this.x + this.labelWidth + 7;
+        int sourceRight = this.x + this.width - 18;
         int availableWidth = sourceRight - sourceX;
 
         if (availableWidth <= 0) {
             return;
         }
 
-        String source = this.textRenderer.trimToWidth(
-                this.globalWrapper.getMetadata().getSourceDisplayName(),
-                Math.max(1, (int) (availableWidth / SOURCE_SCALE)));
+        String source = this.globalWrapper.getMetadata().getSourceDisplayName();
 
         if (source.isEmpty()) {
             return;
         }
 
+        int sourceWidth = this.getStringWidth(source);
+        float scale = sourceWidth > 0
+                ? Math.min(SOURCE_SCALE, availableWidth / (float) sourceWidth)
+                : SOURCE_SCALE;
+
         var matrices = drawContext.getMatrices();
         matrices.push();
-        matrices.scale(SOURCE_SCALE, SOURCE_SCALE, 1.0F);
+        matrices.scale(scale, scale, 1.0F);
         this.drawStringWithShadow(
-                Math.round(sourceX / SOURCE_SCALE),
-                Math.round((this.y + 17) / SOURCE_SCALE),
+                Math.round(sourceX / scale),
+                Math.round((this.y + 21) / scale),
                 SOURCE_COLOR, source, drawContext);
         matrices.pop();
     }

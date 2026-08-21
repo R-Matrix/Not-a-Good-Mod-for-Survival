@@ -9,9 +9,12 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
@@ -48,8 +51,8 @@ public final class GlobalSearchText {
         if (enablePinyin && isPinyinQuery(normalizedQuery)) {
             SearchForms forms = FORMS_CACHE.computeIfAbsent(source, GlobalSearchText::createSearchForms);
             String pinyinQuery = normalizePinyinQuery(normalizedQuery);
-            addIndexedMatches(forms.fullPinyin(), pinyinQuery, matches);
-            addIndexedMatches(forms.initials(), pinyinQuery, matches);
+            addPinyinMatches(forms.tokens(), pinyinQuery, false, matches);
+            addPinyinMatches(forms.tokens(), pinyinQuery, true, matches);
         }
 
         return mergeMatches(matches);
@@ -63,29 +66,96 @@ public final class GlobalSearchText {
         }
     }
 
-    private static void addIndexedMatches(IndexedText indexedText, String query, List<Match> matches) {
+    private static void addPinyinMatches(
+            List<PinyinToken> tokens,
+            String query,
+            boolean initials,
+            List<Match> matches
+    ) {
         if (query.isEmpty()) {
             return;
         }
 
-        String searchableText = indexedText.text();
-        int start = searchableText.indexOf(query);
+        for (int tokenIndex = 0; tokenIndex < tokens.size(); tokenIndex++) {
+            PinyinToken token = tokens.get(tokenIndex);
+            List<String> pronunciations = initials ? token.initials() : token.pinyins();
 
-        while (start >= 0) {
-            int end = start + query.length();
-            int sourceStart = Integer.MAX_VALUE;
-            int sourceEnd = -1;
+            for (int pronunciationIndex = 0; pronunciationIndex < pronunciations.size(); pronunciationIndex++) {
+                String pronunciation = pronunciations.get(pronunciationIndex);
 
-            for (int index = start; index < end; index++) {
-                sourceStart = Math.min(sourceStart, indexedText.sourceStarts()[index]);
-                sourceEnd = Math.max(sourceEnd, indexedText.sourceEnds()[index]);
+                for (int characterOffset = 0; characterOffset < pronunciation.length(); characterOffset++) {
+                    if (pronunciation.charAt(characterOffset) != query.charAt(0)) {
+                        continue;
+                    }
+
+                    matchPinyin(
+                            tokens, query, initials, tokenIndex, pronunciationIndex, characterOffset,
+                            0, token.sourceStart(), new HashSet<>(), matches);
+                }
             }
+        }
+    }
 
-            if (sourceEnd > sourceStart) {
-                matches.add(new Match(sourceStart, sourceEnd));
-            }
+    private static void matchPinyin(
+            List<PinyinToken> tokens,
+            String query,
+            boolean initials,
+            int tokenIndex,
+            int pronunciationIndex,
+            int characterOffset,
+            int queryOffset,
+            int sourceStart,
+            Set<PinyinMatchState> visited,
+            List<Match> matches
+    ) {
+        if (tokenIndex >= tokens.size()) {
+            return;
+        }
 
-            start = searchableText.indexOf(query, start + 1);
+        PinyinMatchState state = new PinyinMatchState(
+                tokenIndex, pronunciationIndex, characterOffset, queryOffset);
+
+        if (!visited.add(state)) {
+            return;
+        }
+
+        PinyinToken token = tokens.get(tokenIndex);
+        List<String> pronunciations = initials ? token.initials() : token.pinyins();
+
+        if (pronunciationIndex >= pronunciations.size()) {
+            return;
+        }
+
+        String pronunciation = pronunciations.get(pronunciationIndex);
+        int charactersToMatch = Math.min(
+                pronunciation.length() - characterOffset, query.length() - queryOffset);
+
+        if (charactersToMatch <= 0 || !pronunciation.regionMatches(
+                characterOffset, query, queryOffset, charactersToMatch)) {
+            return;
+        }
+
+        int nextQueryOffset = queryOffset + charactersToMatch;
+        int nextCharacterOffset = characterOffset + charactersToMatch;
+
+        if (nextQueryOffset == query.length()) {
+            matches.add(new Match(sourceStart, token.sourceEnd()));
+            return;
+        }
+
+        if (nextCharacterOffset < pronunciation.length() || tokenIndex + 1 >= tokens.size()) {
+            return;
+        }
+
+        PinyinToken nextToken = tokens.get(tokenIndex + 1);
+        List<String> nextPronunciations = initials ? nextToken.initials() : nextToken.pinyins();
+
+        for (int nextPronunciationIndex = 0;
+             nextPronunciationIndex < nextPronunciations.size();
+             nextPronunciationIndex++) {
+            matchPinyin(
+                    tokens, query, initials, tokenIndex + 1, nextPronunciationIndex, 0,
+                    nextQueryOffset, sourceStart, visited, matches);
         }
     }
 
@@ -114,46 +184,57 @@ public final class GlobalSearchText {
     }
 
     private static SearchForms createSearchForms(String source) {
-        IndexBuilder fullPinyin = new IndexBuilder();
-        IndexBuilder initials = new IndexBuilder();
+        List<PinyinToken> tokens = new ArrayList<>();
 
         for (int offset = 0; offset < source.length();) {
             int codePoint = source.codePointAt(offset);
             int end = offset + Character.charCount(codePoint);
-            String pinyin = getPinyin(codePoint);
+            List<String> pinyins = getPinyins(codePoint);
 
-            if (pinyin != null) {
-                fullPinyin.append(pinyin, offset, end);
-                initials.append(pinyin.substring(0, 1), offset, end);
+            if (!pinyins.isEmpty()) {
+                List<String> initials = pinyins.stream()
+                        .map(pinyin -> pinyin.substring(0, 1))
+                        .distinct()
+                        .toList();
+                tokens.add(new PinyinToken(offset, end, pinyins, initials));
             } else if (isAsciiLetterOrDigit(codePoint)) {
                 String original = new String(Character.toChars(codePoint)).toLowerCase(Locale.ROOT);
-                fullPinyin.append(original, offset, end);
-                initials.append(original, offset, end);
+                tokens.add(new PinyinToken(offset, end, List.of(original), List.of(original)));
             }
 
             offset = end;
         }
 
-        return new SearchForms(fullPinyin.build(), initials.build());
+        return new SearchForms(List.copyOf(tokens));
     }
 
-    private static String getPinyin(int codePoint) {
+    private static List<String> getPinyins(int codePoint) {
         if (codePoint > Character.MAX_VALUE) {
-            return null;
+            return List.of();
         }
 
         try {
             String[] values = PinyinHelper.toHanyuPinyinStringArray((char) codePoint, PINYIN_FORMAT);
 
-            if (values != null && values.length > 0 && !values[0].isBlank()) {
-                return normalizePinyinQuery(values[0]);
+            if (values == null || values.length == 0) {
+                return List.of();
             }
+
+            Set<String> pinyins = new LinkedHashSet<>();
+
+            for (String value : values) {
+                if (value != null && !value.isBlank()) {
+                    pinyins.add(normalizePinyinQuery(value));
+                }
+            }
+
+            return List.copyOf(pinyins);
         } catch (BadHanyuPinyinOutputFormatCombination exception) {
             NotAGoodModForSurvival.LOGGER.debug(
                     "Could not convert code point {} to pinyin.", codePoint, exception);
         }
 
-        return null;
+        return List.of();
     }
 
     private static boolean isPinyinQuery(String query) {
@@ -197,36 +278,22 @@ public final class GlobalSearchText {
     public record Match(int start, int end) {
     }
 
-    private record SearchForms(IndexedText fullPinyin, IndexedText initials) {
+    private record SearchForms(List<PinyinToken> tokens) {
     }
 
-    private record IndexedText(String text, int[] sourceStarts, int[] sourceEnds) {
+    private record PinyinToken(
+            int sourceStart,
+            int sourceEnd,
+            List<String> pinyins,
+            List<String> initials
+    ) {
     }
 
-    private static final class IndexBuilder {
-        private final StringBuilder text = new StringBuilder();
-        private final List<Integer> sourceStarts = new ArrayList<>();
-        private final List<Integer> sourceEnds = new ArrayList<>();
-
-        private void append(String value, int sourceStart, int sourceEnd) {
-            this.text.append(value);
-
-            for (int index = 0; index < value.length(); index++) {
-                this.sourceStarts.add(sourceStart);
-                this.sourceEnds.add(sourceEnd);
-            }
-        }
-
-        private IndexedText build() {
-            int[] starts = new int[this.sourceStarts.size()];
-            int[] ends = new int[this.sourceEnds.size()];
-
-            for (int index = 0; index < starts.length; index++) {
-                starts[index] = this.sourceStarts.get(index);
-                ends[index] = this.sourceEnds.get(index);
-            }
-
-            return new IndexedText(this.text.toString(), starts, ends);
-        }
+    private record PinyinMatchState(
+            int tokenIndex,
+            int pronunciationIndex,
+            int characterOffset,
+            int queryOffset
+    ) {
     }
 }

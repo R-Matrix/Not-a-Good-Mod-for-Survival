@@ -94,7 +94,7 @@ public final class GlobalWidgetListConfigOptions extends WidgetListConfigOptions
     protected int getBrowserEntryHeightFor(ConfigOptionWrapper entry) {
         if (entry instanceof GlobalConfigOptionWrapper globalEntry &&
                 globalEntry.getMetadata().shouldShowSource()) {
-            return 26;
+            return 30;
         }
 
         return super.getBrowserEntryHeightFor(entry);
