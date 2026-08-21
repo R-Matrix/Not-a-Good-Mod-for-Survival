@@ -61,6 +61,10 @@ public final class GlobalConfigMetadata {
     }
 
     public boolean shouldShowSource() {
+        return this.showSource && GlobalSearchSettings.isSourceDisplayEnabled();
+    }
+
+    public boolean hasExternalSource() {
         return this.showSource;
     }
 
@@ -121,11 +125,16 @@ public final class GlobalConfigMetadata {
     }
 
     public boolean matchesText(IConfigBase config, String query) {
-        return GlobalSearchText.contains(config.getName(), query) ||
-                GlobalSearchText.contains(config.getConfigGuiDisplayName(), query) ||
-                GlobalSearchText.contains(config.getTranslatedName(), query) ||
-                GlobalSearchText.contains(config.getComment(), query) ||
-                (this.keybind != null && GlobalSearchText.contains(this.keybind.getKeysDisplayString(), query));
+        boolean matchesVisibleName = GlobalSearchText.contains(config.getConfigGuiDisplayName(), query);
+        boolean matchesEnglishName = GlobalSearchSettings.isEnglishConfigNameSearchEnabled() &&
+                (GlobalSearchText.contains(config.getName(), query) ||
+                        GlobalSearchText.contains(config.getTranslatedName(), query));
+        boolean matchesComment = GlobalSearchSettings.isCommentSearchEnabled() &&
+                GlobalSearchText.contains(config.getComment(), query);
+        boolean matchesKeybind = this.keybind != null &&
+                GlobalSearchText.contains(this.keybind.getKeysDisplayString(), query);
+
+        return matchesVisibleName || matchesEnglishName || matchesComment || matchesKeybind;
     }
 
     public GuiBase createConfigScreen() {

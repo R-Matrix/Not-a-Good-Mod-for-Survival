@@ -81,6 +81,11 @@ public final class GlobalWidgetConfigOption extends WidgetConfigOption {
     }
 
     private void renderConfigName(DrawContext drawContext) {
+        if (!GlobalSearchSettings.isSearchHighlightEnabled()) {
+            this.drawStringWithShadow(this.x, this.y + 8, 0xFFFFFFFF, this.configName, drawContext);
+            return;
+        }
+
         for (String term : this.highlightTerms) {
             for (GlobalSearchText.Match match : GlobalSearchText.findMatches(this.configName, term)) {
                 int startX = this.x + this.getStringWidth(this.configName.substring(0, match.start()));

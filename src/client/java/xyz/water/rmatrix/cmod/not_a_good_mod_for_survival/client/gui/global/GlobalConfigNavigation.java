@@ -89,7 +89,8 @@ public final class GlobalConfigNavigation {
     }
 
     public static synchronized boolean shouldHighlight(IConfigBase config) {
-        return isActiveForCurrentScreen() && matchesTarget(config);
+        return GlobalSearchSettings.isJumpHighlightEnabled() &&
+                isActiveForCurrentScreen() && matchesTarget(config);
     }
 
     public static synchronized void onUserAction(GuiBase screen) {

@@ -23,7 +23,7 @@ public final class GlobalSearchText {
     }
 
     public static boolean contains(String source, String query) {
-        return !findMatches(source, query).isEmpty();
+        return !findMatches(source, query, GlobalSearchSettings.isPinyinSearchEnabled()).isEmpty();
     }
 
     /**
@@ -31,6 +31,10 @@ public final class GlobalSearchText {
      * Pinyin matches are mapped back to the Chinese characters that produced them.
      */
     public static List<Match> findMatches(String source, String query) {
+        return findMatches(source, query, GlobalSearchSettings.isPinyinSearchEnabled());
+    }
+
+    public static List<Match> findMatches(String source, String query, boolean enablePinyin) {
         if (source == null || source.isEmpty() || query == null || query.isBlank()) {
             return List.of();
         }
@@ -39,7 +43,7 @@ public final class GlobalSearchText {
         List<Match> matches = new ArrayList<>();
         addDirectMatches(source, normalizedQuery, matches);
 
-        if (isPinyinQuery(normalizedQuery)) {
+        if (enablePinyin && isPinyinQuery(normalizedQuery)) {
             SearchForms forms = FORMS_CACHE.computeIfAbsent(source, GlobalSearchText::createSearchForms);
             String pinyinQuery = normalizePinyinQuery(normalizedQuery);
             addIndexedMatches(forms.fullPinyin(), pinyinQuery, matches);

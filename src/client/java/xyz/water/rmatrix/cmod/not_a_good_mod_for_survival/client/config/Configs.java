@@ -174,8 +174,44 @@ public final class Configs implements IConfigHandler {
                 "Search Malilib configuration options from other mods in the All tab.")
                 .apply(CONFIG_KEY);
 
+        public static final ConfigBoolean HIGHLIGHT_SEARCH_RESULTS = new ConfigBoolean(
+                "highlightSearchResults", true,
+                "Highlight text matched by the global configuration search.")
+                .apply(CONFIG_KEY);
+
+        public static final ConfigBoolean HIGHLIGHT_JUMP_TARGET = new ConfigBoolean(
+                "highlightJumpTarget", true,
+                "Highlight the configuration option reached by a global-search jump.")
+                .apply(CONFIG_KEY);
+
+        public static final ConfigBoolean ENABLE_PINYIN_SEARCH = new ConfigBoolean(
+                "enablePinyinSearch", true,
+                "Allow global configuration search to match Chinese text by pinyin.")
+                .apply(CONFIG_KEY);
+
+        public static final ConfigBoolean SHOW_CONFIG_SOURCE = new ConfigBoolean(
+                "showConfigSource", true,
+                "Show the originating mod and category below global configuration options.")
+                .apply(CONFIG_KEY);
+
+        public static final ConfigBoolean SEARCH_ENGLISH_CONFIG_NAMES_IN_CHINESE = new ConfigBoolean(
+                "searchEnglishConfigNamesInChinese", true,
+                "When using a Chinese language, also search English configuration names.")
+                .apply(CONFIG_KEY);
+
+        public static final ConfigBoolean SEARCH_COMMENTS = new ConfigBoolean(
+                "searchComments", true,
+                "Include configuration comments in global search results.")
+                .apply(CONFIG_KEY);
+
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
-                ENABLE_GLOBAL_MALILIB_SEARCH
+                ENABLE_GLOBAL_MALILIB_SEARCH,
+                HIGHLIGHT_SEARCH_RESULTS,
+                HIGHLIGHT_JUMP_TARGET,
+                ENABLE_PINYIN_SEARCH,
+                SHOW_CONFIG_SOURCE,
+                SEARCH_ENGLISH_CONFIG_NAMES_IN_CHINESE,
+                SEARCH_COMMENTS
         );
 
         private GlobalSearch() {

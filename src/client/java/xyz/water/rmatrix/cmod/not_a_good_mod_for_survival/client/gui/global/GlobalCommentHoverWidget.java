@@ -107,6 +107,11 @@ final class GlobalCommentHoverWidget extends WidgetHoverInfo {
     }
 
     private void renderHighlightedLine(DrawContext drawContext, String line, int x, int y) {
+        if (!GlobalSearchSettings.isSearchHighlightEnabled()) {
+            drawContext.drawTextWithShadow(this.textRenderer, line, x, y, 0xFFFFFFFF);
+            return;
+        }
+
         for (String term : this.highlightTerms) {
             for (GlobalSearchText.Match match : GlobalSearchText.findMatches(line, term)) {
                 int startX = x + this.getStringWidth(line.substring(0, match.start()));

@@ -52,7 +52,7 @@ public final class GlobalWidgetListConfigOptions extends WidgetListConfigOptions
     protected void addNonFilteredContents(Collection<ConfigOptionWrapper> entries) {
         for (ConfigOptionWrapper entry : entries) {
             if (entry instanceof GlobalConfigOptionWrapper globalEntry &&
-                    !globalEntry.getMetadata().shouldShowSource()) {
+                    !globalEntry.getMetadata().hasExternalSource()) {
                 this.listContents.add(entry);
             }
         }
