@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.render.RenderConfigs;
 
 @Mixin(EntityRenderDispatcher.class)
 public abstract class EntityRenderDispatcherMixin {
@@ -28,7 +28,7 @@ public abstract class EntityRenderDispatcherMixin {
             float green,
             float blue,
             CallbackInfo info) {
-        if (!Configs.DebugRender.ENTITY_VIEW_ARROW.getBooleanValue()) {
+        if (!RenderConfigs.DebugRender.ENTITY_VIEW_ARROW.getBooleanValue()) {
             return;
         }
 

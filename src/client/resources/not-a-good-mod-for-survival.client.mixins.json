@@ -13,11 +13,11 @@
 		"sign.SingleCharacterSignTextMixin",
 		"sign.ClientPlayerEntityMixin",
 		"inventory.InventoryScreenMixin",
-		"global.GuiBaseMixin",
-		"global.GuiBaseAccessor",
-		"global.ButtonBaseAccessor",
-		"global.WidgetListBaseMixin",
-		"global.WidgetConfigOptionMixin"
+		"global_search.GuiBaseMixin",
+		"global_search.GuiBaseAccessor",
+		"global_search.ButtonBaseAccessor",
+		"global_search.WidgetListBaseMixin",
+		"global_search.WidgetConfigOptionMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

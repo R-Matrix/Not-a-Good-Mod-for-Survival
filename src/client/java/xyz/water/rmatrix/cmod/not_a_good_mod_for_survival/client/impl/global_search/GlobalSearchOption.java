@@ -1,14 +1,14 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search;
 
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
 
 /** A Malilib config wrapper carrying the source metadata needed by global search. */
-public final class GlobalConfigOptionWrapper extends ConfigOptionWrapper {
+public final class GlobalSearchOption extends ConfigOptionWrapper {
     private final IConfigBase config;
-    private final GlobalConfigMetadata metadata;
+    private final GlobalSearchMetadata metadata;
 
-    public GlobalConfigOptionWrapper(IConfigBase config, GlobalConfigMetadata metadata) {
+    public GlobalSearchOption(IConfigBase config, GlobalSearchMetadata metadata) {
         super(config);
         this.config = config;
         this.metadata = metadata;
@@ -19,7 +19,7 @@ public final class GlobalConfigOptionWrapper extends ConfigOptionWrapper {
         return this.config;
     }
 
-    public GlobalConfigMetadata getMetadata() {
+    public GlobalSearchMetadata getMetadata() {
         return this.metadata;
     }
 }

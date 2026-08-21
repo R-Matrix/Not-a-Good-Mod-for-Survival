@@ -14,10 +14,12 @@ import java.util.List;
 import java.util.Objects;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Hotkeys;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global.GlobalConfigRepository;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global.GlobalWidgetListConfigOptions;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.gameplay.GameplayConfigs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.render.RenderConfigs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.tools.ToolConfigs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global_search.GlobalSearchWidgetListConfigOptions;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchRepository;
 
 /** A compact malilib-style settings screen for this project. */
 public final class GuiConfigs extends GuiConfigsBase {
@@ -44,9 +46,9 @@ public final class GuiConfigs extends GuiConfigsBase {
     @Override
     protected WidgetListConfigOptions createListWidget(int listX, int listY) {
         if (this.selectedTab == ConfigGuiTab.ALL &&
-                Configs.GlobalSearch.ENABLE_GLOBAL_MALILIB_SEARCH.getBooleanValue()) {
-            GlobalConfigRepository.rebuild();
-            return new GlobalWidgetListConfigOptions(
+                ToolConfigs.ENABLE_GLOBAL_MALILIB_SEARCH.getBooleanValue()) {
+            GlobalSearchRepository.rebuild();
+            return new GlobalSearchWidgetListConfigOptions(
                     listX, listY, this.getBrowserWidth(), this.getBrowserHeight(),
                     this.getConfigWidth(), 0.0F, this);
         }
@@ -67,23 +69,15 @@ public final class GuiConfigs extends GuiConfigsBase {
         List<? extends IConfigBase> configs = switch (this.selectedTab) {
             case ALL -> {
                 List<IConfigBase> allConfigs = new ArrayList<>();
-                allConfigs.addAll(Configs.Test.OPTIONS);
-                allConfigs.addAll(Configs.DebugRender.OPTIONS);
-                allConfigs.addAll(Configs.Fireworks.OPTIONS);
-                allConfigs.addAll(Configs.Signs.OPTIONS);
-                allConfigs.addAll(Configs.Bridging.OPTIONS);
-                allConfigs.addAll(Configs.Movement.OPTIONS);
-                allConfigs.addAll(Configs.GlobalSearch.OPTIONS);
+                allConfigs.addAll(GameplayConfigs.OPTIONS);
+                allConfigs.addAll(RenderConfigs.OPTIONS);
+                allConfigs.addAll(ToolConfigs.OPTIONS);
                 allConfigs.addAll(Hotkeys.HOTKEY_LIST);
                 yield allConfigs;
             }
-            case TEST -> Configs.Test.OPTIONS;
-            case DEBUG_RENDER -> Configs.DebugRender.OPTIONS;
-            case FIREWORKS -> Configs.Fireworks.OPTIONS;
-            case SIGNS -> Configs.Signs.OPTIONS;
-            case BRIDGING -> Configs.Bridging.OPTIONS;
-            case MOVEMENT -> Configs.Movement.OPTIONS;
-            case GLOBAL_SEARCH -> Configs.GlobalSearch.OPTIONS;
+            case GAMEPLAY -> GameplayConfigs.OPTIONS;
+            case RENDER -> RenderConfigs.OPTIONS;
+            case TOOLS -> ToolConfigs.OPTIONS;
             case HOTKEYS -> Hotkeys.HOTKEY_LIST;
         };
 
@@ -95,8 +89,8 @@ public final class GuiConfigs extends GuiConfigsBase {
         super.onSettingsChanged();
 
         if (this.selectedTab == ConfigGuiTab.ALL &&
-                Configs.GlobalSearch.ENABLE_GLOBAL_MALILIB_SEARCH.getBooleanValue()) {
-            for (String modId : GlobalConfigRepository.getSourceModIds()) {
+                ToolConfigs.ENABLE_GLOBAL_MALILIB_SEARCH.getBooleanValue()) {
+            for (String modId : GlobalSearchRepository.getSourceModIds()) {
                 if (!NotAGoodModForSurvival.MOD_ID.equalsIgnoreCase(modId)) {
                     ConfigManager.getInstance().onConfigsChanged(modId);
                 }
@@ -128,13 +122,9 @@ public final class GuiConfigs extends GuiConfigsBase {
 
     public enum ConfigGuiTab {
         ALL("not-a-good-mod-for-survival.gui.button.config_gui.all"),
-        TEST("not-a-good-mod-for-survival.gui.button.config_gui.test"),
-        DEBUG_RENDER("not-a-good-mod-for-survival.gui.button.config_gui.debug_render"),
-        FIREWORKS("not-a-good-mod-for-survival.gui.button.config_gui.fireworks"),
-        SIGNS("not-a-good-mod-for-survival.gui.button.config_gui.signs"),
-        BRIDGING("not-a-good-mod-for-survival.gui.button.config_gui.bridging"),
-        MOVEMENT("not-a-good-mod-for-survival.gui.button.config_gui.movement"),
-        GLOBAL_SEARCH("not-a-good-mod-for-survival.gui.button.config_gui.global_search"),
+        GAMEPLAY("not-a-good-mod-for-survival.gui.button.config_gui.gameplay"),
+        RENDER("not-a-good-mod-for-survival.gui.button.config_gui.render"),
+        TOOLS("not-a-good-mod-for-survival.gui.button.config_gui.tools"),
         HOTKEYS("not-a-good-mod-for-survival.gui.button.config_gui.hotkeys");
 
         private final String translationKey;

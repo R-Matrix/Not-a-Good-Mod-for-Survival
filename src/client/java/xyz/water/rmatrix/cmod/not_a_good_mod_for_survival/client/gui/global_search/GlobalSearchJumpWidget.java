@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global_search;
 
 import fi.dy.masa.malilib.gui.widgets.WidgetBase;
 import fi.dy.masa.malilib.render.RenderUtils;
@@ -9,17 +9,19 @@ import net.minecraft.client.gui.DrawContext;
 
 import java.util.List;
 
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchMetadata;
+
 /** A small gray arrow that opens the source Malilib configuration screen. */
-public final class GlobalJumpWidget extends WidgetBase {
-    private final GlobalConfigMetadata metadata;
+public final class GlobalSearchJumpWidget extends WidgetBase {
+    private final GlobalSearchMetadata metadata;
     private final IConfigBase config;
 
-    public GlobalJumpWidget(
+    public GlobalSearchJumpWidget(
             int x,
             int y,
             int width,
             int height,
-            GlobalConfigMetadata metadata,
+            GlobalSearchMetadata metadata,
             IConfigBase config
     ) {
         super(x, y, width, height);
@@ -36,9 +38,9 @@ public final class GlobalJumpWidget extends WidgetBase {
         var screen = this.metadata.createConfigScreen();
 
         if (screen != null) {
-            GlobalConfigNavigation.begin(screen, this.metadata, this.config);
+            GlobalSearchNavigation.begin(screen, this.metadata, this.config);
             MinecraftClient.getInstance().setScreen(screen);
-            GlobalConfigNavigation.afterScreenOpened(screen);
+            GlobalSearchNavigation.afterScreenOpened(screen);
         }
 
         return true;

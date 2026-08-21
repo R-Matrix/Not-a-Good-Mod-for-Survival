@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -12,15 +12,16 @@ import java.util.function.Consumer;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.GlobalSearchTabTarget;
 
 /** Best-effort discovery for Malilib screens that expose a nested ConfigGuiTab enum. */
-final class ReflectiveGlobalConfigTabCollector {
+final class ReflectiveConfigTabCollector {
     private static final String TAB_ENUM_NAME = "ConfigGuiTab";
 
-    private ReflectiveGlobalConfigTabCollector() {
+    private ReflectiveConfigTabCollector() {
     }
 
-    static boolean collect(GuiConfigsBase screen, Consumer<GlobalConfigTabPage> pageConsumer) {
+    static boolean collect(GuiConfigsBase screen, Consumer<GlobalSearchTabPage> pageConsumer) {
         try {
             return collectInternal(screen, pageConsumer);
         } catch (LinkageError | RuntimeException exception) {
@@ -33,7 +34,7 @@ final class ReflectiveGlobalConfigTabCollector {
 
     private static boolean collectInternal(
             GuiConfigsBase screen,
-            Consumer<GlobalConfigTabPage> pageConsumer
+            Consumer<GlobalSearchTabPage> pageConsumer
     ) {
         Class<?> screenType = screen.getClass();
         Class<?> tabType = findTabType(screenType);
@@ -76,7 +77,7 @@ final class ReflectiveGlobalConfigTabCollector {
                     state.set(tab);
 
                     List<ConfigOptionWrapper> options = screen.getConfigs();
-                    pageConsumer.accept(new GlobalConfigTabPage(
+                    pageConsumer.accept(new GlobalSearchTabPage(
                             getTabName(tab), options, state.createTarget(tab)));
                     collected = true;
                 } catch (ReflectiveOperationException | RuntimeException exception) {
@@ -335,7 +336,7 @@ final class ReflectiveGlobalConfigTabCollector {
 
         void set(Enum<?> tab) throws ReflectiveOperationException;
 
-        GlobalConfigTabTarget createTarget(Enum<?> tab);
+        GlobalSearchTabTarget createTarget(Enum<?> tab);
     }
 
     private record FieldTabState(Field field, Object target) implements TabState {
@@ -350,7 +351,7 @@ final class ReflectiveGlobalConfigTabCollector {
         }
 
         @Override
-        public GlobalConfigTabTarget createTarget(Enum<?> tab) {
+        public GlobalSearchTabTarget createTarget(Enum<?> tab) {
             return screen -> {
                 Object target = Modifier.isStatic(this.field.getModifiers()) ? null : screen;
 
@@ -383,7 +384,7 @@ final class ReflectiveGlobalConfigTabCollector {
         }
 
         @Override
-        public GlobalConfigTabTarget createTarget(Enum<?> tab) {
+        public GlobalSearchTabTarget createTarget(Enum<?> tab) {
             return screen -> {
                 Object target = Modifier.isStatic(this.setter.getModifiers()) ? null : screen;
 
@@ -404,12 +405,12 @@ final class ReflectiveGlobalConfigTabCollector {
         }
     }
 
-    record GlobalConfigTabPage(
+    record GlobalSearchTabPage(
             String category,
             List<ConfigOptionWrapper> options,
-            GlobalConfigTabTarget tabTarget
+            GlobalSearchTabTarget tabTarget
     ) {
-        GlobalConfigTabPage {
+        GlobalSearchTabPage {
             category = category == null || category.isBlank() ? "Configs" : category.trim();
             options = List.copyOf(options);
         }

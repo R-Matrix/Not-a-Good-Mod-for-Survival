@@ -4,12 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.config.ConfigUtils;
-import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigHandler;
-import fi.dy.masa.malilib.config.options.ConfigBoolean;
-import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
-import fi.dy.masa.malilib.config.options.ConfigDouble;
-import fi.dy.masa.malilib.config.options.ConfigInteger;
 import fi.dy.masa.malilib.hotkeys.IHotkey;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
@@ -19,10 +14,17 @@ import java.nio.file.Path;
 import java.util.List;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.gameplay.GameplayConfigs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.render.RenderConfigs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.tools.ToolConfigs;
 
-/** Project-owned malilib configuration values and persistence. */
+/** Registers and persists the project's grouped Malilib configuration. */
 public final class Configs implements IConfigHandler {
     private static final String CONFIG_FILE_NAME = NotAGoodModForSurvival.MOD_ID + ".json";
+
+    /*
+    // Development-only test options. These are intentionally disabled and are not part of
+    // the user-facing configuration until they become a real feature.
     private static final String TEST_KEY = NotAGoodModForSurvival.MOD_ID + ".config.test";
 
     public static final class Test {
@@ -39,191 +41,13 @@ public final class Configs implements IConfigHandler {
         private Test() {
         }
     }
+    */
 
-    public static final class DebugRender {
-        private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.debugRender";
-
-        public static final ConfigBooleanHotkeyed ENTITY_VIEW_ARROW = new ConfigBooleanHotkeyed(
-                "entityViewArrow", false, "",
-                "Add an arrowhead to the entity view vector when F3+B hitboxes are visible.")
-                .apply(CONFIG_KEY);
-        public static final ConfigBooleanHotkeyed THICK_CHUNK_BORDER_LINES = new ConfigBooleanHotkeyed(
-                "thickChunkBorderLines", false, "",
-                "Use thicker red and blue lines for the F3+G chunk-border overlay.")
-                .apply(CONFIG_KEY);
-        public static final ConfigInteger CHUNK_BORDER_LINE_WIDTH = new ConfigInteger(
-                "chunkBorderLineWidth", 4, 1, 10,
-                "Width of the enhanced red and blue F3+G chunk-border lines, from 1 to 10.")
-                .apply(CONFIG_KEY);
-        public static final ConfigBooleanHotkeyed SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES = new ConfigBooleanHotkeyed(
-                "occludedCurrentSubchunkBlueLines", false, "",
-                "Keep the current subchunk's blue frame visible through blocks as thin lines.")
-                .apply(CONFIG_KEY);
-        public static final ConfigBooleanHotkeyed HIDE_INVENTORY_PLAYER_MODEL_HITBOX = new ConfigBooleanHotkeyed(
-                "hideInventoryPlayerModelHitbox", false, "",
-                "Hide the player's collision box while rendering the player model in the inventory screen.")
-                .apply(CONFIG_KEY);
-
-        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
-                ENTITY_VIEW_ARROW,
-                THICK_CHUNK_BORDER_LINES,
-                CHUNK_BORDER_LINE_WIDTH,
-                SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES,
-                HIDE_INVENTORY_PLAYER_MODEL_HITBOX
-        );
-
-        private DebugRender() {
-        }
-    }
-
-    public static final class Fireworks {
-        private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.fireworks";
-
-        /** -1 keeps vanilla's max-age/2 behavior; non-negative values are absolute particle ages in ticks. */
-        public static final ConfigInteger FADE_START_TICK = new ConfigInteger(
-                "fadeStartTick", -1, -1, 59,
-                "The tick at which firework spark color and alpha fading starts. -1 uses vanilla timing.")
-                .apply(CONFIG_KEY);
-
-        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
-                FADE_START_TICK
-        );
-
-        private Fireworks() {
-        }
-    }
-
-    public static final class Signs {
-        private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.signs";
-
-        public static final ConfigBooleanHotkeyed ENLARGE_SINGLE_CHARACTER = new ConfigBooleanHotkeyed(
-                "enlargeSingleCharacter", false, "",
-                "Enlarge and center a sign face when it contains exactly one visible character.")
-                .apply(CONFIG_KEY);
-        public static final ConfigDouble SINGLE_CHARACTER_SCALE = new ConfigDouble(
-                "singleCharacterScale", 2.0D, 1.0D, 4.0D, true,
-                "Scale applied to a sign face containing exactly one visible character, from 1.0 to 4.0.") {
-            @Override
-            protected double getClampedValue(double value) {
-                double steppedValue = Math.round(value * 10.0D) / 10.0D;
-                return super.getClampedValue(steppedValue);
-            }
-        }.apply(CONFIG_KEY);
-        public static final ConfigDouble SINGLE_CHARACTER_VERTICAL_OFFSET = new ConfigDouble(
-                "singleCharacterVerticalOffset", 0.0D, -8.0D, 8.0D, true,
-                "Vertical offset for a single-character sign face. Positive values move the character down, from -8.0 to 8.0.") {
-            @Override
-            protected double getClampedValue(double value) {
-                double steppedValue = Math.round(value * 10.0D) / 10.0D;
-                return super.getClampedValue(steppedValue);
-            }
-        }.apply(CONFIG_KEY);
-        public static final ConfigBoolean ENABLE_LONG_SIGN_TEXT = new ConfigBoolean(
-                "enableLongSignText", false,
-                "Open a large, material-independent editor for long sign messages.")
-                .apply(CONFIG_KEY);
-
-        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
-                ENLARGE_SINGLE_CHARACTER,
-                SINGLE_CHARACTER_SCALE,
-                SINGLE_CHARACTER_VERTICAL_OFFSET,
-                ENABLE_LONG_SIGN_TEXT
-        );
-
-        private Signs() {
-        }
-    }
-
-    public static final class Bridging {
-        private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.bridging";
-
-        public static final ConfigBoolean ENABLE_FORWARD_BRIDGING = new ConfigBoolean(
-                "enableForwardBridging", false,
-                "Place a block in the horizontal space directly in front of the block below you when aiming at it.")
-                .apply(CONFIG_KEY);
-
-        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
-                ENABLE_FORWARD_BRIDGING
-        );
-
-        private Bridging() {
-        }
-    }
-
-    public static final class Movement {
-        private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.movement";
-
-        public static final ConfigBoolean MORE_AGGRESSIVE_SPRINT = new ConfigBoolean(
-                "moreAggressiveSprint", false,
-                "Keep sprinting while moving forward even when hunger would normally prevent sprinting.")
-                .apply(CONFIG_KEY);
-
-        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
-                MORE_AGGRESSIVE_SPRINT
-        );
-
-        private Movement() {
-        }
-    }
-
-    public static final class GlobalSearch {
-        private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.globalSearch";
-
-        public static final ConfigBoolean ENABLE_GLOBAL_MALILIB_SEARCH = new ConfigBoolean(
-                "enableGlobalMalilibSearch", false,
-                "Search Malilib configuration options from other mods in the All tab.")
-                .apply(CONFIG_KEY);
-
-        public static final ConfigBoolean HIGHLIGHT_SEARCH_RESULTS = new ConfigBoolean(
-                "highlightSearchResults", true,
-                "Highlight text matched by the global configuration search.")
-                .apply(CONFIG_KEY);
-
-        public static final ConfigBoolean HIGHLIGHT_JUMP_TARGET = new ConfigBoolean(
-                "highlightJumpTarget", true,
-                "Highlight the configuration option reached by a global-search jump.")
-                .apply(CONFIG_KEY);
-
-        public static final ConfigBoolean ENABLE_PINYIN_SEARCH = new ConfigBoolean(
-                "enablePinyinSearch", true,
-                "Allow global configuration search to match Chinese text by pinyin.")
-                .apply(CONFIG_KEY);
-
-        public static final ConfigBoolean SHOW_CONFIG_SOURCE = new ConfigBoolean(
-                "showConfigSource", true,
-                "Show the originating mod and category below global configuration options.")
-                .apply(CONFIG_KEY);
-
-        public static final ConfigBoolean SEARCH_ENGLISH_CONFIG_NAMES_IN_CHINESE = new ConfigBoolean(
-                "searchEnglishConfigNamesInChinese", true,
-                "When using a Chinese language, also search English configuration names.")
-                .apply(CONFIG_KEY);
-
-        public static final ConfigBoolean SEARCH_COMMENTS = new ConfigBoolean(
-                "searchComments", true,
-                "Include configuration comments in global search results.")
-                .apply(CONFIG_KEY);
-
-        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
-                ENABLE_GLOBAL_MALILIB_SEARCH,
-                HIGHLIGHT_SEARCH_RESULTS,
-                HIGHLIGHT_JUMP_TARGET,
-                ENABLE_PINYIN_SEARCH,
-                SHOW_CONFIG_SOURCE,
-                SEARCH_ENGLISH_CONFIG_NAMES_IN_CHINESE,
-                SEARCH_COMMENTS
-        );
-
-        private GlobalSearch() {
-        }
-    }
-
-    /** All boolean configuration toggles, registered so assigned keys can trigger them in-game. */
+    /** All boolean configuration toggles whose keybinds are registered globally. */
     public static final List<IHotkey> BOOLEAN_HOTKEY_LIST = ImmutableList.of(
-            Test.TEST_BOOLEAN,
-            DebugRender.ENTITY_VIEW_ARROW,
-            DebugRender.THICK_CHUNK_BORDER_LINES,
-            DebugRender.SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES
+            RenderConfigs.DebugRender.ENTITY_VIEW_ARROW,
+            RenderConfigs.DebugRender.THICK_CHUNK_BORDER_LINES,
+            RenderConfigs.DebugRender.SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES
     );
 
     public static final Configs INSTANCE = new Configs();
@@ -239,13 +63,10 @@ public final class Configs implements IConfigHandler {
 
             if (element != null && element.isJsonObject()) {
                 JsonObject root = element.getAsJsonObject();
-                ConfigUtils.readConfigBase(root, "Test", Test.OPTIONS);
-                ConfigUtils.readConfigBase(root, "DebugRender", DebugRender.OPTIONS);
-                ConfigUtils.readConfigBase(root, "Fireworks", Fireworks.OPTIONS);
-                ConfigUtils.readConfigBase(root, "Signs", Signs.OPTIONS);
-                ConfigUtils.readConfigBase(root, "Bridging", Bridging.OPTIONS);
-                ConfigUtils.readConfigBase(root, "Movement", Movement.OPTIONS);
-                ConfigUtils.readConfigBase(root, "GlobalSearch", GlobalSearch.OPTIONS);
+                // ConfigUtils.readConfigBase(root, "Test", Test.OPTIONS);
+                ConfigUtils.readConfigBase(root, "Gameplay", GameplayConfigs.OPTIONS);
+                ConfigUtils.readConfigBase(root, "Render", RenderConfigs.OPTIONS);
+                ConfigUtils.readConfigBase(root, "Tools", ToolConfigs.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
             } else {
                 NotAGoodModForSurvival.LOGGER.error(
@@ -263,13 +84,10 @@ public final class Configs implements IConfigHandler {
 
         if (Files.isDirectory(directory)) {
             JsonObject root = new JsonObject();
-            ConfigUtils.writeConfigBase(root, "Test", Test.OPTIONS);
-            ConfigUtils.writeConfigBase(root, "DebugRender", DebugRender.OPTIONS);
-            ConfigUtils.writeConfigBase(root, "Fireworks", Fireworks.OPTIONS);
-            ConfigUtils.writeConfigBase(root, "Signs", Signs.OPTIONS);
-            ConfigUtils.writeConfigBase(root, "Bridging", Bridging.OPTIONS);
-            ConfigUtils.writeConfigBase(root, "Movement", Movement.OPTIONS);
-            ConfigUtils.writeConfigBase(root, "GlobalSearch", GlobalSearch.OPTIONS);
+            // ConfigUtils.writeConfigBase(root, "Test", Test.OPTIONS);
+            ConfigUtils.writeConfigBase(root, "Gameplay", GameplayConfigs.OPTIONS);
+            ConfigUtils.writeConfigBase(root, "Render", RenderConfigs.OPTIONS);
+            ConfigUtils.writeConfigBase(root, "Tools", ToolConfigs.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
             JsonUtils.writeJsonToFileAsPath(root, directory.resolve(CONFIG_FILE_NAME));
         } else {

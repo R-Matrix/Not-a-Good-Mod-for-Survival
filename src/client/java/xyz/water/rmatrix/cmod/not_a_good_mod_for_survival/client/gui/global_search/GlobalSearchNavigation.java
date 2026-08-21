@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global_search;
 
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.gui.GuiBase;
@@ -12,26 +12,29 @@ import java.util.List;
 import java.util.Locale;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global.ButtonBaseAccessor;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global.GuiBaseAccessor;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.GlobalSearchTabTarget;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchMetadata;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchSettings;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global_search.ButtonBaseAccessor;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global_search.GuiBaseAccessor;
 
 /** Coordinates source-screen navigation and the temporary target-row highlight. */
-public final class GlobalConfigNavigation {
+public final class GlobalSearchNavigation {
     private static GuiBase targetScreen;
     private static IConfigBase targetConfig;
     private static String targetConfigName;
     private static String targetCategory;
-    private static GlobalConfigTabTarget targetTab;
+    private static GlobalSearchTabTarget targetTab;
     private static boolean active;
     private static boolean targetFound;
     private static boolean targetTabSelected;
 
-    private GlobalConfigNavigation() {
+    private GlobalSearchNavigation() {
     }
 
     public static synchronized void begin(
             GuiBase screen,
-            GlobalConfigMetadata metadata,
+            GlobalSearchMetadata metadata,
             IConfigBase config
     ) {
         targetScreen = screen;

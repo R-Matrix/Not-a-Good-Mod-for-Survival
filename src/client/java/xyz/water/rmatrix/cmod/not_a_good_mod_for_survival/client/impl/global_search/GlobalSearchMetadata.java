@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search;
 
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.hotkeys.IHotkey;
@@ -14,25 +14,28 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import fi.dy.masa.malilib.gui.GuiBase;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.GlobalSearchTabTarget;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchSettings;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchText;
 
 /** Source and searchable metadata attached to a globally collected Malilib option. */
-public final class GlobalConfigMetadata {
+public final class GlobalSearchMetadata {
     private final String modId;
     private final String modName;
     private final Set<String> categories = new LinkedHashSet<>();
     private Supplier<GuiBase> configScreenSupplier;
     private final boolean showSource;
     private IKeybind keybind;
-    private GlobalConfigTabTarget configTabTarget;
+    private GlobalSearchTabTarget configTabTarget;
 
-    public GlobalConfigMetadata(
+    public GlobalSearchMetadata(
             String modId,
             String modName,
             String category,
             Supplier<GuiBase> configScreenSupplier,
             boolean showSource,
             IKeybind keybind,
-            GlobalConfigTabTarget configTabTarget
+            GlobalSearchTabTarget configTabTarget
     ) {
         this.modId = modId;
         this.modName = modName;
@@ -92,11 +95,11 @@ public final class GlobalConfigMetadata {
         }
     }
 
-    public GlobalConfigTabTarget getConfigTabTarget() {
+    public GlobalSearchTabTarget getConfigTabTarget() {
         return this.configTabTarget;
     }
 
-    public void setConfigTabTarget(GlobalConfigTabTarget configTabTarget) {
+    public void setConfigTabTarget(GlobalSearchTabTarget configTabTarget) {
         if (this.configTabTarget == null && configTabTarget != null) {
             this.configTabTarget = configTabTarget;
         }

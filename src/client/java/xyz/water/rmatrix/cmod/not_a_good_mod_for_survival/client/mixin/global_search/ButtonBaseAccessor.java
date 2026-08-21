@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global_search;
 
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import org.spongepowered.asm.mixin.Mixin;

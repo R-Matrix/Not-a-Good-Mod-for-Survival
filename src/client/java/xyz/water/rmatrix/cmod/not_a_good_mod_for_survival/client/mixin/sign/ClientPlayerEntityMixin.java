@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.gameplay.GameplayConfigs;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.sign.LongSignEditScreen;
 
 /** Opens the material-independent long-sign editor when the feature is enabled. */
@@ -20,7 +20,7 @@ public abstract class ClientPlayerEntityMixin {
             boolean front,
             CallbackInfo info
     ) {
-        if (!Configs.Signs.ENABLE_LONG_SIGN_TEXT.getBooleanValue()) {
+        if (!GameplayConfigs.Signs.ENABLE_LONG_SIGN_TEXT.getBooleanValue()) {
             return;
         }
 

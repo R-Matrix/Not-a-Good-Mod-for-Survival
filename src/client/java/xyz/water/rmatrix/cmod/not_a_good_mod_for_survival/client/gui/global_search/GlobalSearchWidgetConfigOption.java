@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global_search;
 
 import java.util.List;
 
@@ -10,24 +10,29 @@ import fi.dy.masa.malilib.gui.widgets.WidgetHoverInfo;
 import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptionsBase;
 import net.minecraft.client.gui.DrawContext;
 
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchOption;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchQuery;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchSettings;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchText;
+
 /** Standard Malilib config row with source information and text-match highlighting. */
-public final class GlobalWidgetConfigOption extends WidgetConfigOption {
+public final class GlobalSearchWidgetConfigOption extends WidgetConfigOption {
     private static final float SOURCE_SCALE = 0.75F;
     static final int MATCH_BACKGROUND = 0xD0D99000;
     private static final int SOURCE_COLOR = 0xFF808080;
 
-    private final GlobalConfigOptionWrapper globalWrapper;
+    private final GlobalSearchOption globalWrapper;
     private final String configName;
     private final List<String> highlightTerms;
 
-    public GlobalWidgetConfigOption(
+    public GlobalSearchWidgetConfigOption(
             int x,
             int y,
             int width,
             int height,
             int labelWidth,
             int configWidth,
-            GlobalConfigOptionWrapper wrapper,
+            GlobalSearchOption wrapper,
             int listIndex,
             GuiConfigsBase host,
             WidgetListConfigOptionsBase<?, ?> parent,
@@ -44,7 +49,7 @@ public final class GlobalWidgetConfigOption extends WidgetConfigOption {
         this.replaceCommentHoverWidget();
 
         if (wrapper.getMetadata().getConfigScreenSupplier() != null) {
-            this.addWidget(new GlobalJumpWidget(
+            this.addWidget(new GlobalSearchJumpWidget(
                     this.x + this.width - 14, this.y + 1, 14, 20,
                     wrapper.getMetadata(), wrapper.getConfig()));
         }
@@ -62,7 +67,7 @@ public final class GlobalWidgetConfigOption extends WidgetConfigOption {
 
         if (original != null) {
             this.subWidgets.remove(original);
-            this.addWidget(new GlobalCommentHoverWidget(
+            this.addWidget(new GlobalSearchCommentHoverWidget(
                     original.getX(), original.getY(), original.getWidth(), original.getHeight(),
                     original.getLines(), this.highlightTerms));
         }

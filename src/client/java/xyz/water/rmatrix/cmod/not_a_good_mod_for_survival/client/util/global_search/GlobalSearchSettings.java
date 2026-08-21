@@ -1,9 +1,9 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search;
 
 import net.minecraft.client.MinecraftClient;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.tools.ToolConfigs;
 
 import java.util.Locale;
 
@@ -13,28 +13,28 @@ public final class GlobalSearchSettings {
     }
 
     public static boolean isSearchHighlightEnabled() {
-        return Configs.GlobalSearch.HIGHLIGHT_SEARCH_RESULTS.getBooleanValue();
+        return ToolConfigs.HIGHLIGHT_SEARCH_RESULTS.getBooleanValue();
     }
 
     public static boolean isJumpHighlightEnabled() {
-        return Configs.GlobalSearch.HIGHLIGHT_JUMP_TARGET.getBooleanValue();
+        return ToolConfigs.HIGHLIGHT_JUMP_TARGET.getBooleanValue();
     }
 
     public static boolean isPinyinSearchEnabled() {
-        return Configs.GlobalSearch.ENABLE_PINYIN_SEARCH.getBooleanValue();
+        return ToolConfigs.ENABLE_PINYIN_SEARCH.getBooleanValue();
     }
 
     public static boolean isSourceDisplayEnabled() {
-        return Configs.GlobalSearch.SHOW_CONFIG_SOURCE.getBooleanValue();
+        return ToolConfigs.SHOW_CONFIG_SOURCE.getBooleanValue();
     }
 
     public static boolean isCommentSearchEnabled() {
-        return Configs.GlobalSearch.SEARCH_COMMENTS.getBooleanValue();
+        return ToolConfigs.SEARCH_COMMENTS.getBooleanValue();
     }
 
     public static boolean isEnglishConfigNameSearchEnabled() {
         return !isChineseLanguage() ||
-                Configs.GlobalSearch.SEARCH_ENGLISH_CONFIG_NAMES_IN_CHINESE.getBooleanValue();
+                ToolConfigs.SEARCH_ENGLISH_CONFIG_NAMES_IN_CHINESE.getBooleanValue();
     }
 
     private static boolean isChineseLanguage() {

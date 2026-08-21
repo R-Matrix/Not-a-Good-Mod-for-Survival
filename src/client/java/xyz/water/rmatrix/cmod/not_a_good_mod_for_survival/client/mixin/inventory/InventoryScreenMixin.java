@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.render.RenderConfigs;
 
 /** Prevents F3+B hitboxes from being drawn around the player model in the inventory screen. */
 @Mixin(InventoryScreen.class)
@@ -30,7 +30,7 @@ public abstract class InventoryScreenMixin {
             CallbackInfo info
     ) {
         this.notAGoodModForSurvival$hitboxesSuppressed = false;
-        if (!Configs.DebugRender.HIDE_INVENTORY_PLAYER_MODEL_HITBOX.getBooleanValue()) {
+        if (!RenderConfigs.DebugRender.HIDE_INVENTORY_PLAYER_MODEL_HITBOX.getBooleanValue()) {
             return;
         }
 

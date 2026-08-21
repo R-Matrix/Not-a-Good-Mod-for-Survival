@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -24,18 +24,19 @@ import fi.dy.masa.malilib.registry.Registry;
 import fi.dy.masa.malilib.util.data.ModInfo;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.GlobalSearchTabTarget;
 
 /** Builds a searchable snapshot of the Malilib configuration and hotkey registries. */
-public final class GlobalConfigRepository {
+public final class GlobalSearchRepository {
     private static final String LOCAL_MOD_ID = NotAGoodModForSurvival.MOD_ID;
-    private static List<GlobalConfigOptionWrapper> entries = List.of();
+    private static List<GlobalSearchOption> entries = List.of();
     private static Set<String> sourceModIds = Set.of();
 
-    private GlobalConfigRepository() {
+    private GlobalSearchRepository() {
     }
 
     public static synchronized void rebuild() {
-        Map<String, GlobalConfigOptionWrapper> byConfig = new LinkedHashMap<>();
+        Map<String, GlobalSearchOption> byConfig = new LinkedHashMap<>();
         Map<String, ModInfo> registeredScreens = getRegisteredScreens();
 
         collectRegisteredScreenConfigs(byConfig);
@@ -46,7 +47,7 @@ public final class GlobalConfigRepository {
                 entries.stream().map(entry -> entry.getMetadata().getModId()).toList()));
     }
 
-    public static synchronized List<GlobalConfigOptionWrapper> getEntries() {
+    public static synchronized List<GlobalSearchOption> getEntries() {
         return entries;
     }
 
@@ -55,7 +56,7 @@ public final class GlobalConfigRepository {
     }
 
     private static void collectRegisteredScreenConfigs(
-            Map<String, GlobalConfigOptionWrapper> byConfig
+            Map<String, GlobalSearchOption> byConfig
     ) {
         for (ModInfo modInfo : Registry.CONFIG_SCREEN.getAllModsWithConfigScreens()) {
             Supplier<GuiBase> supplier = modInfo.getConfigScreenSupplier();
@@ -67,7 +68,7 @@ public final class GlobalConfigRepository {
             GuiBase screen = createScreen(supplier);
 
             if (screen instanceof GuiConfigsBase configScreen) {
-                if (!ReflectiveGlobalConfigTabCollector.collect(configScreen, page -> addScreenConfigs(
+                if (!ReflectiveConfigTabCollector.collect(configScreen, page -> addScreenConfigs(
                         byConfig, modInfo, supplier, page.category(), page.options(), page.tabTarget()))) {
                     addScreenConfigs(byConfig, modInfo, supplier, "Configs", configScreen.getConfigs(), null);
                 }
@@ -76,7 +77,7 @@ public final class GlobalConfigRepository {
     }
 
     private static void collectRegisteredHotkeys(
-            Map<String, GlobalConfigOptionWrapper> byConfig,
+            Map<String, GlobalSearchOption> byConfig,
             Map<String, ModInfo> registeredScreens
     ) {
         for (KeybindCategory category : InputEventHandler.getKeybindManager().getKeybindCategories()) {
@@ -93,12 +94,12 @@ public final class GlobalConfigRepository {
     }
 
     private static void addScreenConfigs(
-            Map<String, GlobalConfigOptionWrapper> byConfig,
+            Map<String, GlobalSearchOption> byConfig,
             ModInfo modInfo,
             Supplier<GuiBase> supplier,
             String initialCategory,
             List<ConfigOptionWrapper> wrappers,
-            GlobalConfigTabTarget tabTarget
+            GlobalSearchTabTarget tabTarget
     ) {
         String category = initialCategory == null || initialCategory.isBlank()
                 ? "Configs" : initialCategory;
@@ -125,7 +126,7 @@ public final class GlobalConfigRepository {
     }
 
     private static void addConfig(
-            Map<String, GlobalConfigOptionWrapper> byConfig,
+            Map<String, GlobalSearchOption> byConfig,
             String modId,
             String modName,
             String category,
@@ -140,12 +141,12 @@ public final class GlobalConfigRepository {
 
         String uniqueKey = modId.toLowerCase(Locale.ROOT) + "\u0000" + config.getName().toLowerCase(Locale.ROOT);
 
-        GlobalConfigOptionWrapper existing = byConfig.get(uniqueKey);
+        GlobalSearchOption existing = byConfig.get(uniqueKey);
 
         if (existing == null) {
-            GlobalConfigMetadata metadata = new GlobalConfigMetadata(
+            GlobalSearchMetadata metadata = new GlobalSearchMetadata(
                     modId, modName, category, supplier, showSource, keybind, null);
-            byConfig.put(uniqueKey, new GlobalConfigOptionWrapper(config, metadata));
+            byConfig.put(uniqueKey, new GlobalSearchOption(config, metadata));
             return;
         }
 
@@ -161,7 +162,7 @@ public final class GlobalConfigRepository {
     }
 
     private static void addScreenConfig(
-            Map<String, GlobalConfigOptionWrapper> byConfig,
+            Map<String, GlobalSearchOption> byConfig,
             String modId,
             String modName,
             String category,
@@ -169,18 +170,18 @@ public final class GlobalConfigRepository {
             boolean showSource,
             IConfigBase config,
             IKeybind keybind,
-            GlobalConfigTabTarget tabTarget
+            GlobalSearchTabTarget tabTarget
     ) {
         if (config == null || modId == null || modName == null) {
             return;
         }
 
         String uniqueKey = modId.toLowerCase(Locale.ROOT) + "\u0000" + config.getName().toLowerCase(Locale.ROOT);
-        GlobalConfigMetadata metadata = new GlobalConfigMetadata(
+        GlobalSearchMetadata metadata = new GlobalSearchMetadata(
                 modId, modName, category, supplier, showSource, keybind, tabTarget);
 
         // A later tab is usually more specific than an "All" tab, so preserve its source.
-        byConfig.put(uniqueKey, new GlobalConfigOptionWrapper(config, metadata));
+        byConfig.put(uniqueKey, new GlobalSearchOption(config, metadata));
     }
 
     private static IKeybind getKeybind(IConfigBase config) {

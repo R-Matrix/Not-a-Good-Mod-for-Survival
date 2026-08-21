@@ -16,7 +16,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.Util;
 
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.render.RenderConfigs;
 
 /**
  * Adds screen-space thick lines to the vanilla chunk border renderer.
@@ -71,8 +71,8 @@ public final class ChunkBorderLineRenderer {
             double cameraY,
             double cameraZ
     ) {
-        boolean renderThickLines = Configs.DebugRender.THICK_CHUNK_BORDER_LINES.getBooleanValue();
-        boolean renderOccludedCurrentSubchunk = Configs.DebugRender.SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES.getBooleanValue();
+        boolean renderThickLines = RenderConfigs.DebugRender.THICK_CHUNK_BORDER_LINES.getBooleanValue();
+        boolean renderOccludedCurrentSubchunk = RenderConfigs.DebugRender.SHOW_OCCLUDED_CURRENT_SUBCHUNK_BLUE_LINES.getBooleanValue();
         if (!renderThickLines && !renderOccludedCurrentSubchunk) {
             return;
         }
@@ -95,7 +95,7 @@ public final class ChunkBorderLineRenderer {
         MatrixStack.Entry entry = matrices.peek();
         if (renderThickLines) {
             VertexConsumer vertices = vertexConsumers.getBuffer(
-                    THICK_LINES.apply(Configs.DebugRender.CHUNK_BORDER_LINE_WIDTH.getIntegerValue())
+                    THICK_LINES.apply(RenderConfigs.DebugRender.CHUNK_BORDER_LINE_WIDTH.getIntegerValue())
             );
 
             // Vanilla's red lines are the 4x4 lattice of vertical chunk-corner lines.

@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.render.RenderConfigs;
 
 /** Makes the start of the vanilla animated-particle fade configurable for firework sparks. */
 @Mixin(AnimatedParticle.class)
@@ -47,7 +47,7 @@ public abstract class AnimatedParticleMixin extends SpriteBillboardParticle {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void notAGoodModForSurvival$disableVanillaFade(CallbackInfo info) {
-        if (Configs.Fireworks.FADE_START_TICK.getIntegerValue() >= 0) {
+        if (RenderConfigs.Fireworks.FADE_START_TICK.getIntegerValue() >= 0) {
             if (!this.notAGoodModForSurvival$customFadeInitialized) {
                 this.notAGoodModForSurvival$customFadeInitialized = true;
                 this.notAGoodModForSurvival$baseAlpha = this.alpha;
@@ -63,7 +63,7 @@ public abstract class AnimatedParticleMixin extends SpriteBillboardParticle {
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void notAGoodModForSurvival$applyConfiguredFade(CallbackInfo info) {
-        int fadeStartTick = Configs.Fireworks.FADE_START_TICK.getIntegerValue();
+        int fadeStartTick = RenderConfigs.Fireworks.FADE_START_TICK.getIntegerValue();
 
         if (fadeStartTick < 0 || !this.notAGoodModForSurvival$hasTargetColor) {
             return;

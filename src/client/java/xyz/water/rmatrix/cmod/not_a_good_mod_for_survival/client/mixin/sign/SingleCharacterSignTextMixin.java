@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.render.RenderConfigs;
 
 /** Enlarges and centers a sign face when it contains exactly one visible character. */
 @Mixin(AbstractSignBlockEntityRenderer.class)
@@ -37,11 +37,11 @@ public abstract class SingleCharacterSignTextMixin {
             boolean front,
             CallbackInfo info
     ) {
-        if (!Configs.Signs.ENLARGE_SINGLE_CHARACTER.getBooleanValue()) {
+        if (!RenderConfigs.Signs.ENLARGE_SINGLE_CHARACTER.getBooleanValue()) {
             return;
         }
 
-        float scale = (float) Configs.Signs.SINGLE_CHARACTER_SCALE.getDoubleValue();
+        float scale = (float) RenderConfigs.Signs.SINGLE_CHARACTER_SCALE.getDoubleValue();
         if (scale <= 1.0F) {
             return;
         }
@@ -53,7 +53,7 @@ public abstract class SingleCharacterSignTextMixin {
 
         float originalLineY = singleCharacterLine * textLineHeight - 2.0F * textLineHeight;
         float centeredLineY = -0.5F * textLineHeight
-                + (float) Configs.Signs.SINGLE_CHARACTER_VERTICAL_OFFSET.getDoubleValue();
+                + (float) RenderConfigs.Signs.SINGLE_CHARACTER_VERTICAL_OFFSET.getDoubleValue();
         float translationY = centeredLineY
                 - scale * originalLineY;
 

@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global_search;
 
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
 import fi.dy.masa.malilib.gui.widgets.WidgetConfigOption;
@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global.GlobalConfigNavigation;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global_search.GlobalSearchNavigation;
 
 /** Draws a temporary accent behind the rule reached from global search. */
 @Mixin(WidgetConfigOption.class)
@@ -25,7 +25,7 @@ public abstract class WidgetConfigOptionMixin {
         ConfigOptionWrapper entry = widget.getEntry();
 
         if (entry == null || entry.getConfig() == null ||
-                !GlobalConfigNavigation.shouldHighlight(entry.getConfig())) {
+                !GlobalSearchNavigation.shouldHighlight(entry.getConfig())) {
             return;
         }
 

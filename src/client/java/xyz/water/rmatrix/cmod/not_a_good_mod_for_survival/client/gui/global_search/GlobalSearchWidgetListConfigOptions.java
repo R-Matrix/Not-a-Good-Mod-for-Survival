@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global_search;
 
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
@@ -9,9 +9,13 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchOption;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchQuery;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchRepository;
+
 /** Malilib config list that applies the global query syntax and jump affordance. */
-public final class GlobalWidgetListConfigOptions extends WidgetListConfigOptions {
-    public GlobalWidgetListConfigOptions(
+public final class GlobalSearchWidgetListConfigOptions extends WidgetListConfigOptions {
+    public GlobalSearchWidgetListConfigOptions(
             int x,
             int y,
             int width,
@@ -25,7 +29,7 @@ public final class GlobalWidgetListConfigOptions extends WidgetListConfigOptions
 
     @Override
     protected Collection<ConfigOptionWrapper> getAllEntries() {
-        return GlobalConfigRepository.getEntries().stream()
+        return GlobalSearchRepository.getEntries().stream()
                 .map(entry -> (ConfigOptionWrapper) entry)
                 .toList();
     }
@@ -42,7 +46,7 @@ public final class GlobalWidgetListConfigOptions extends WidgetListConfigOptions
         GlobalSearchQuery query = GlobalSearchQuery.parse(filterText);
 
         for (ConfigOptionWrapper entry : entries) {
-            if (entry instanceof GlobalConfigOptionWrapper globalEntry && query.matches(globalEntry)) {
+            if (entry instanceof GlobalSearchOption globalEntry && query.matches(globalEntry)) {
                 this.listContents.add(entry);
             }
         }
@@ -51,7 +55,7 @@ public final class GlobalWidgetListConfigOptions extends WidgetListConfigOptions
     @Override
     protected void addNonFilteredContents(Collection<ConfigOptionWrapper> entries) {
         for (ConfigOptionWrapper entry : entries) {
-            if (entry instanceof GlobalConfigOptionWrapper globalEntry &&
+            if (entry instanceof GlobalSearchOption globalEntry &&
                     !globalEntry.getMetadata().hasExternalSource()) {
                 this.listContents.add(entry);
             }
@@ -61,7 +65,7 @@ public final class GlobalWidgetListConfigOptions extends WidgetListConfigOptions
     @Override
     protected Comparator<ConfigOptionWrapper> getComparator() {
         return Comparator.comparing(entry -> {
-            if (entry instanceof GlobalConfigOptionWrapper globalEntry) {
+            if (entry instanceof GlobalSearchOption globalEntry) {
                 return globalEntry.getMetadata().getModName() + "\u0000" + entry.getConfig().getName();
             }
 
@@ -77,11 +81,11 @@ public final class GlobalWidgetListConfigOptions extends WidgetListConfigOptions
             boolean isOdd,
             ConfigOptionWrapper wrapper
     ) {
-        if (wrapper instanceof GlobalConfigOptionWrapper globalEntry) {
+        if (wrapper instanceof GlobalSearchOption globalEntry) {
             int entryHeight = this.getBrowserEntryHeightFor(wrapper);
             List<String> highlightTerms = GlobalSearchQuery.parse(this.getFilterText()).getTextTerms();
 
-            return new GlobalWidgetConfigOption(
+            return new GlobalSearchWidgetConfigOption(
                     x, y, this.browserEntryWidth, entryHeight,
                     this.maxLabelWidth, this.configWidth, globalEntry, listIndex, this.parent, this,
                     highlightTerms);
@@ -92,7 +96,7 @@ public final class GlobalWidgetListConfigOptions extends WidgetListConfigOptions
 
     @Override
     protected int getBrowserEntryHeightFor(ConfigOptionWrapper entry) {
-        if (entry instanceof GlobalConfigOptionWrapper globalEntry &&
+        if (entry instanceof GlobalSearchOption globalEntry &&
                 globalEntry.getMetadata().shouldShowSource()) {
             return 30;
         }

@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +37,7 @@ public final class GlobalSearchQuery {
         return new GlobalSearchQuery(List.copyOf(groups));
     }
 
-    public boolean matches(GlobalConfigOptionWrapper entry) {
+    public boolean matches(GlobalSearchOption entry) {
         if (this.groups.isEmpty()) {
             return true;
         }
@@ -98,8 +98,8 @@ public final class GlobalSearchQuery {
             return new Condition(kind, value.toLowerCase(Locale.ROOT));
         }
 
-        private boolean matches(GlobalConfigOptionWrapper entry) {
-            GlobalConfigMetadata metadata = entry.getMetadata();
+        private boolean matches(GlobalSearchOption entry) {
+            GlobalSearchMetadata metadata = entry.getMetadata();
 
             return switch (this.kind) {
                 case MOD -> metadata.matchesMod(this.value);

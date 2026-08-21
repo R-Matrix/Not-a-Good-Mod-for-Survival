@@ -1,4 +1,4 @@
-package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
+package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global_search;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import fi.dy.masa.malilib.gui.widgets.WidgetHoverInfo;
@@ -10,11 +10,14 @@ import net.minecraft.client.gui.screen.Screen;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchSettings;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchText;
+
 /** Malilib comment tooltip that also highlights plain-text search matches. */
-final class GlobalCommentHoverWidget extends WidgetHoverInfo {
+final class GlobalSearchCommentHoverWidget extends WidgetHoverInfo {
     private final List<String> highlightTerms;
 
-    GlobalCommentHoverWidget(
+    GlobalSearchCommentHoverWidget(
             int x,
             int y,
             int width,
@@ -117,7 +120,7 @@ final class GlobalCommentHoverWidget extends WidgetHoverInfo {
                 int startX = x + this.getStringWidth(line.substring(0, match.start()));
                 int endX = x + this.getStringWidth(line.substring(0, match.end()));
                 drawContext.fill(startX, y - 1, endX, y + this.fontHeight + 1,
-                        GlobalWidgetConfigOption.MATCH_BACKGROUND);
+                        GlobalSearchWidgetConfigOption.MATCH_BACKGROUND);
             }
         }
 

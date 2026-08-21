@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.gameplay.GameplayConfigs;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.interaction.ForwardBridgePlacement;
 
 /** Temporarily replaces an air miss with a valid support-face hit for forward bridging. */
@@ -26,7 +26,7 @@ public abstract class MinecraftClientMixin {
         this.notAGoodModForSurvival$originalCrosshairTarget = null;
 
         MinecraftClient client = MinecraftClient.getInstance();
-        if (!Configs.Bridging.ENABLE_FORWARD_BRIDGING.getBooleanValue()) {
+        if (!GameplayConfigs.Bridging.ENABLE_FORWARD_BRIDGING.getBooleanValue()) {
             return;
         }
 
