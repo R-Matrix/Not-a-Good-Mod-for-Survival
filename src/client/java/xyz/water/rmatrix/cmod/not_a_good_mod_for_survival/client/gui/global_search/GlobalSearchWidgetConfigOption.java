@@ -1,3 +1,10 @@
+/*
+ * Design reference: Fallen_Breath's TweakerMore optional-rule presentation.
+ * The global-search row and its rendering logic are independently implemented
+ * for this project.
+ *
+ * Source: https://github.com/Fallen-Breath/TweakerMore
+ */
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global_search;
 
 import java.util.List;
@@ -12,6 +19,7 @@ import net.minecraft.client.gui.DrawContext;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchOption;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchQuery;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.config.ConfigAvailability;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchSettings;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchText;
 
@@ -20,6 +28,7 @@ public final class GlobalSearchWidgetConfigOption extends WidgetConfigOption {
     private static final float SOURCE_SCALE = 0.75F;
     static final int MATCH_BACKGROUND = 0xD0D99000;
     private static final int SOURCE_COLOR = 0xFF808080;
+    private static final int UNAVAILABLE_COLOR = 0xFFAA0000;
 
     private final GlobalSearchOption globalWrapper;
     private final String configName;
@@ -84,8 +93,11 @@ public final class GlobalSearchWidgetConfigOption extends WidgetConfigOption {
     }
 
     private void renderConfigName(DrawContext drawContext) {
+        int configNameColor = ConfigAvailability.isAvailable(this.globalWrapper.getConfig())
+                ? 0xFFFFFFFF : UNAVAILABLE_COLOR;
+
         if (!GlobalSearchSettings.isSearchHighlightEnabled()) {
-            this.drawStringWithShadow(this.x, this.y + 8, 0xFFFFFFFF, this.configName, drawContext);
+            this.drawStringWithShadow(this.x, this.y + 8, configNameColor, this.configName, drawContext);
             return;
         }
 
@@ -97,7 +109,7 @@ public final class GlobalSearchWidgetConfigOption extends WidgetConfigOption {
             }
         }
 
-        this.drawStringWithShadow(this.x, this.y + 8, 0xFFFFFFFF, this.configName, drawContext);
+        this.drawStringWithShadow(this.x, this.y + 8, configNameColor, this.configName, drawContext);
     }
 
     private void renderSource(DrawContext drawContext) {

@@ -1,18 +1,75 @@
+/*
+ * This file contains an adaptation of the Malilib config-option label hook
+ * used by TweakerMore.
+ *
+ * Original project: TweakerMore
+ * Copyright (C) 2023 Fallen_Breath and contributors
+ * Source: https://github.com/Fallen-Breath/TweakerMore
+ * Original license: GNU Lesser General Public License v3.0 (LGPL-3.0-only)
+ *
+ * The adapted portions of this file remain available under the same license.
+ * See THIRD_PARTY_NOTICES.md and LICENSES/LGPL-3.0.txt for the attribution
+ * and license reference.
+ */
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global_search;
 
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
 import fi.dy.masa.malilib.gui.widgets.WidgetConfigOption;
+import fi.dy.masa.malilib.gui.widgets.WidgetConfigOptionBase;
+import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptionsBase;
+import fi.dy.masa.malilib.config.IConfigBase;
 import net.minecraft.client.gui.DrawContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.config.ConfigAvailability;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global_search.GlobalSearchNavigation;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.config.ConditionalConfigLabel;
 
 /** Draws a temporary accent behind the rule reached from global search. */
 @Mixin(WidgetConfigOption.class)
-public abstract class WidgetConfigOptionMixin {
+public abstract class WidgetConfigOptionMixin extends WidgetConfigOptionBase<ConfigOptionWrapper> {
+    protected WidgetConfigOptionMixin(
+            int x,
+            int y,
+            int width,
+            int height,
+            WidgetListConfigOptionsBase<?, ?> parent,
+            ConfigOptionWrapper entry,
+            int listIndex
+    ) {
+        super(x, y, width, height, parent, entry, listIndex);
+    }
+
+    @Redirect(
+            method = "addConfigOption",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lfi/dy/masa/malilib/gui/widgets/WidgetConfigOption;addLabel(IIIII[Ljava/lang/String;)V",
+                    remap = false),
+            remap = false)
+    private void notAGoodModForSurvival$createConfigLabel(
+            WidgetConfigOption self,
+            int x,
+            int y,
+            int width,
+            int height,
+            int textColor,
+            String[] lines
+    ) {
+        IConfigBase config = this.entry == null ? null : this.entry.getConfig();
+
+        if (config instanceof ConfigAvailability availability) {
+            this.addWidget(new ConditionalConfigLabel(
+                    x, y, width, height, textColor, lines, availability));
+        } else {
+            this.addLabel(x, y, width, height, textColor, lines);
+        }
+    }
+
     @Inject(method = "render", at = @At("HEAD"))
     private void notAGoodModForSurvival$renderGlobalTarget(
             int mouseX,

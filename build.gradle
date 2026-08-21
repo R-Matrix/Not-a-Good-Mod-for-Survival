@@ -43,9 +43,13 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	// Litematica and its required MaLiLib library (Minecraft 1.21.4, Fabric).
+	// MaLiLib is required by the project's configuration UI.
 	modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
-	modImplementation "fi.dy.masa.litematica:litematica-fabric-${project.minecraft_version}:${project.litematica_version}"
+
+	// Litematica is an optional integration. Keep it available for compilation and
+	// development runs without making it a runtime dependency of the published mod.
+	modCompileOnly "fi.dy.masa.litematica:litematica-fabric-${project.minecraft_version}:${project.litematica_version}"
+	modRuntimeOnly "fi.dy.masa.litematica:litematica-fabric-${project.minecraft_version}:${project.litematica_version}"
 	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
 	// Used by the global Malilib search to index Chinese config text by pinyin.
@@ -82,6 +86,11 @@ jar {
 
 	from("LICENSE") {
 		rename { "${it}_$projectName"}
+	}
+
+	from("THIRD_PARTY_NOTICES.md")
+	from("LICENSES") {
+		into("LICENSES")
 	}
 }
 

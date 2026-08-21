@@ -21,7 +21,7 @@ public final class InputHandler implements IKeybindProvider {
 
     @Override
     public void addKeysToMap(IKeybindManager manager) {
-        for (IHotkey hotkey : Hotkeys.HOTKEY_LIST) {
+        for (IHotkey hotkey : Hotkeys.getAvailableHotkeys()) {
             manager.addKeybindToMap(hotkey.getKeybind());
         }
 
@@ -35,7 +35,7 @@ public final class InputHandler implements IKeybindProvider {
         manager.addHotkeysForCategory(
                 NotAGoodModForSurvival.MOD_NAME,
                 NotAGoodModForSurvival.MOD_ID + ".hotkeys.category",
-                Hotkeys.HOTKEY_LIST);
+                Hotkeys.getAvailableHotkeys());
         manager.addHotkeysForCategory(
                 NotAGoodModForSurvival.MOD_NAME,
                 NotAGoodModForSurvival.MOD_ID + ".hotkeys.category.booleanConfigs",
