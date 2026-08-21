@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import fi.dy.masa.malilib.gui.GuiBase;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
 
 /** Source and searchable metadata attached to a globally collected Malilib option. */
 public final class GlobalConfigMetadata {
@@ -146,7 +147,9 @@ public final class GlobalConfigMetadata {
 
         try {
             screen = this.configScreenSupplier.get();
-        } catch (RuntimeException ignored) {
+        } catch (RuntimeException exception) {
+            NotAGoodModForSurvival.LOGGER.debug(
+                    "Could not create the config screen for {}.", this.modId, exception);
             return null;
         }
         Screen currentScreen = MinecraftClient.getInstance().currentScreen;

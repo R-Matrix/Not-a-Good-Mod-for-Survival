@@ -13,7 +13,6 @@
 		"sign.SingleCharacterSignTextMixin",
 		"sign.ClientPlayerEntityMixin",
 		"inventory.InventoryScreenMixin",
-		"global.ConfigManagerMixin",
 		"global.GuiBaseMixin",
 		"global.GuiBaseAccessor",
 		"global.ButtonBaseAccessor",

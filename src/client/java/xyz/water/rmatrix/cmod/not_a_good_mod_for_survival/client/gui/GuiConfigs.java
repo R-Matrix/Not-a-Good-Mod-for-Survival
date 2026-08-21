@@ -126,7 +126,7 @@ public final class GuiConfigs extends GuiConfigsBase {
         }
     }
 
-    private enum ConfigGuiTab {
+    public enum ConfigGuiTab {
         ALL("not-a-good-mod-for-survival.gui.button.config_gui.all"),
         TEST("not-a-good-mod-for-survival.gui.button.config_gui.test"),
         DEBUG_RENDER("not-a-good-mod-for-survival.gui.button.config_gui.debug_render"),

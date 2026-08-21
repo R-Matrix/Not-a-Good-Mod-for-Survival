@@ -14,6 +14,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
+
 /** Text matching for global search, including full pinyin and pinyin initials. */
 public final class GlobalSearchText {
     private static final HanyuPinyinOutputFormat PINYIN_FORMAT = createPinyinFormat();
@@ -146,8 +148,9 @@ public final class GlobalSearchText {
             if (values != null && values.length > 0 && !values[0].isBlank()) {
                 return normalizePinyinQuery(values[0]);
             }
-        } catch (BadHanyuPinyinOutputFormatCombination ignored) {
-            // The format is fixed above, so this should never happen. Treat it as non-pinyin text if it does.
+        } catch (BadHanyuPinyinOutputFormatCombination exception) {
+            NotAGoodModForSurvival.LOGGER.debug(
+                    "Could not convert code point {} to pinyin.", codePoint, exception);
         }
 
         return null;

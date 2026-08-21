@@ -2,6 +2,7 @@ package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
 
 import net.minecraft.client.MinecraftClient;
 
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
 
 import java.util.Locale;
@@ -41,7 +42,8 @@ public final class GlobalSearchSettings {
             MinecraftClient client = MinecraftClient.getInstance();
             String language = client.getLanguageManager().getLanguage();
             return language != null && language.toLowerCase(Locale.ROOT).startsWith("zh");
-        } catch (RuntimeException ignored) {
+        } catch (RuntimeException exception) {
+            NotAGoodModForSurvival.LOGGER.debug("Could not read the current language.", exception);
             return false;
         }
     }
