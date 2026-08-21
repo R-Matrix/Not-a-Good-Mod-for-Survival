@@ -44,6 +44,11 @@ public final class ToolConfigs {
             "Include configuration comments in global search results.")
             .apply(CONFIG_KEY);
 
+    public static final ConfigBoolean ENABLE_TWEAKER_MORE_COMPATIBILITY = new ConfigBoolean(
+            "enableTweakerMoreCompatibility", true,
+            "Detect TweakerMore conditional configurations and mark unavailable options in red.")
+            .apply(CONFIG_KEY);
+
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
             ENABLE_GLOBAL_MALILIB_SEARCH,
             HIGHLIGHT_SEARCH_RESULTS,
@@ -51,7 +56,8 @@ public final class ToolConfigs {
             ENABLE_PINYIN_SEARCH,
             SHOW_CONFIG_SOURCE,
             SEARCH_ENGLISH_CONFIG_NAMES_IN_CHINESE,
-            SEARCH_COMMENTS
+            SEARCH_COMMENTS,
+            ENABLE_TWEAKER_MORE_COMPATIBILITY
     );
 
     private ToolConfigs() {

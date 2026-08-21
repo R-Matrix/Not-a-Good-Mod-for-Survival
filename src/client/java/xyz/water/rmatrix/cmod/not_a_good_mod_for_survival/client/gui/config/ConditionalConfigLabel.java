@@ -16,8 +16,6 @@ package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.config;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetLabel;
 
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.config.ConfigAvailability;
-
 /** Malilib config label that marks an unavailable option in dark red. */
 public final class ConditionalConfigLabel extends WidgetLabel {
     public ConditionalConfigLabel(
@@ -26,16 +24,13 @@ public final class ConditionalConfigLabel extends WidgetLabel {
             int width,
             int height,
             int textColor,
-            String[] displayLines,
-            ConfigAvailability availability
+            String[] displayLines
     ) {
         super(x, y, width, height, textColor, displayLines);
 
-        if (!availability.isAvailable()) {
-            for (int index = 0; index < this.labels.size(); index++) {
-                String line = this.labels.get(index);
-                this.labels.set(index, GuiBase.TXT_DARK_RED + line + GuiBase.TXT_RST);
-            }
+        for (int index = 0; index < this.labels.size(); index++) {
+            String line = this.labels.get(index);
+            this.labels.set(index, GuiBase.TXT_DARK_RED + line + GuiBase.TXT_RST);
         }
     }
 }

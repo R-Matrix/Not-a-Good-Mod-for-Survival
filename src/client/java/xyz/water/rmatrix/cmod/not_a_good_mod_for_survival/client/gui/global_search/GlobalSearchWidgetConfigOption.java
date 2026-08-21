@@ -18,8 +18,7 @@ import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptionsBase;
 import net.minecraft.client.gui.DrawContext;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchOption;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchQuery;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.config.ConfigAvailability;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.config.ConfigAvailabilityResolver;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchSettings;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchText;
 
@@ -93,7 +92,7 @@ public final class GlobalSearchWidgetConfigOption extends WidgetConfigOption {
     }
 
     private void renderConfigName(DrawContext drawContext) {
-        int configNameColor = ConfigAvailability.isAvailable(this.globalWrapper.getConfig())
+        int configNameColor = ConfigAvailabilityResolver.isAvailable(this.globalWrapper.getConfig())
                 ? 0xFFFFFFFF : UNAVAILABLE_COLOR;
 
         if (!GlobalSearchSettings.isSearchHighlightEnabled()) {

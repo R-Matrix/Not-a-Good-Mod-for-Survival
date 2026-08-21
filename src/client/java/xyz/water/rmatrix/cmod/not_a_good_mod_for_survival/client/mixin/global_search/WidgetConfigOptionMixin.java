@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.config.ConfigAvailability;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.config.ConfigAvailabilityResolver;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global_search.GlobalSearchNavigation;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.config.ConditionalConfigLabel;
 
@@ -62,9 +62,9 @@ public abstract class WidgetConfigOptionMixin extends WidgetConfigOptionBase<Con
     ) {
         IConfigBase config = this.entry == null ? null : this.entry.getConfig();
 
-        if (config instanceof ConfigAvailability availability) {
+        if (config != null && ConfigAvailabilityResolver.isUnavailable(config)) {
             this.addWidget(new ConditionalConfigLabel(
-                    x, y, width, height, textColor, lines, availability));
+                    x, y, width, height, textColor, lines));
         } else {
             this.addLabel(x, y, width, height, textColor, lines);
         }

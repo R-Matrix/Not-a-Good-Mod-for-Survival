@@ -7,8 +7,8 @@ import fi.dy.masa.malilib.hotkeys.IHotkey;
 import java.util.List;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.config.ConfigAvailability;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.config.ConditionalConfigHotkey;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.config.ConfigAvailabilityResolver;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.ModEnvironment;
 
 /** Project-owned malilib hotkeys. */
@@ -34,7 +34,7 @@ public final class Hotkeys {
     /** Hotkeys that can actually be registered in the current environment. */
     public static List<ConfigHotkey> getAvailableHotkeys() {
         return HOTKEY_LIST.stream()
-                .filter(config -> ConfigAvailability.isAvailable(config))
+                .filter(config -> ConfigAvailabilityResolver.isAvailable(config))
                 .toList();
     }
 
