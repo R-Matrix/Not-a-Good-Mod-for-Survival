@@ -20,6 +20,9 @@
 		],
 		"client": [
 			"xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.NotAGoodModForSurvivalClient"
+		],
+		"modmenu": [
+			"xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.compat.modmenu.ModMenuImpl"
 		]
 	},
 	"mixins": [

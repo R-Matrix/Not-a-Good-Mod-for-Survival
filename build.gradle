@@ -15,6 +15,12 @@ repositories {
 		name = "FallenBreath"
 		url = "https://maven.fallenbreath.me/releases"
 	}
+
+	// Mod Menu is used only for the optional configuration-screen integration.
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/releases"
+	}
 }
 
 loom {
@@ -40,6 +46,7 @@ dependencies {
 	// Litematica and its required MaLiLib library (Minecraft 1.21.4, Fabric).
 	modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
 	modImplementation "fi.dy.masa.litematica:litematica-fabric-${project.minecraft_version}:${project.litematica_version}"
+	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
 	// Used by the global Malilib search to index Chinese config text by pinyin.
 	implementation "com.belerweb:pinyin4j:2.5.1"
