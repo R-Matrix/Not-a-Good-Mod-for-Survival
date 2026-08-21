@@ -97,7 +97,7 @@ public final class Configs implements IConfigHandler {
         private static final String CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.signs";
 
         public static final ConfigBooleanHotkeyed ENLARGE_SINGLE_CHARACTER = new ConfigBooleanHotkeyed(
-                "enlargeSingleCharacter", true, "",
+                "enlargeSingleCharacter", false, "",
                 "Enlarge and center a sign face when it contains exactly one visible character.")
                 .apply(CONFIG_KEY);
         public static final ConfigDouble SINGLE_CHARACTER_SCALE = new ConfigDouble(

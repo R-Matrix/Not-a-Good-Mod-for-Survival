@@ -94,15 +94,12 @@ public final class GlobalConfigMetadata {
     }
 
     public boolean matchesMod(String query) {
-        String normalized = query.toLowerCase(Locale.ROOT);
-        return this.modId.toLowerCase(Locale.ROOT).contains(normalized) ||
-                this.modName.toLowerCase(Locale.ROOT).contains(normalized);
+        return GlobalSearchText.contains(this.modId, query) ||
+                GlobalSearchText.contains(this.modName, query);
     }
 
     public boolean matchesCategory(String query) {
-        String normalized = query.toLowerCase(Locale.ROOT);
-        return this.categories.stream().anyMatch(category ->
-                category.toLowerCase(Locale.ROOT).contains(normalized));
+        return this.categories.stream().anyMatch(category -> GlobalSearchText.contains(category, query));
     }
 
     public boolean matchesKey(String query) {
@@ -124,12 +121,11 @@ public final class GlobalConfigMetadata {
     }
 
     public boolean matchesText(IConfigBase config, String query) {
-        String normalized = query.toLowerCase(Locale.ROOT);
-        return contains(config.getName(), normalized) ||
-                contains(config.getConfigGuiDisplayName(), normalized) ||
-                contains(config.getTranslatedName(), normalized) ||
-                contains(config.getComment(), normalized) ||
-                (this.keybind != null && contains(this.keybind.getKeysDisplayString(), normalized));
+        return GlobalSearchText.contains(config.getName(), query) ||
+                GlobalSearchText.contains(config.getConfigGuiDisplayName(), query) ||
+                GlobalSearchText.contains(config.getTranslatedName(), query) ||
+                GlobalSearchText.contains(config.getComment(), query) ||
+                (this.keybind != null && GlobalSearchText.contains(this.keybind.getKeysDisplayString(), query));
     }
 
     public GuiBase createConfigScreen() {
@@ -151,10 +147,6 @@ public final class GlobalConfigMetadata {
         }
 
         return screen;
-    }
-
-    private static boolean contains(String value, String query) {
-        return value != null && value.toLowerCase(Locale.ROOT).contains(query);
     }
 
     private static String normalizeKeyName(String keyName) {

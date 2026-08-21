@@ -9,7 +9,6 @@ import net.minecraft.client.gui.screen.Screen;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /** Malilib comment tooltip that also highlights plain-text search matches. */
 final class GlobalCommentHoverWidget extends WidgetHoverInfo {
@@ -108,22 +107,12 @@ final class GlobalCommentHoverWidget extends WidgetHoverInfo {
     }
 
     private void renderHighlightedLine(DrawContext drawContext, String line, int x, int y) {
-        String lowerLine = line.toLowerCase(Locale.ROOT);
-
         for (String term : this.highlightTerms) {
-            if (term.isBlank()) {
-                continue;
-            }
-
-            int start = lowerLine.indexOf(term);
-
-            while (start >= 0) {
-                int end = start + term.length();
-                int startX = x + this.getStringWidth(line.substring(0, start));
-                int endX = x + this.getStringWidth(line.substring(0, end));
+            for (GlobalSearchText.Match match : GlobalSearchText.findMatches(line, term)) {
+                int startX = x + this.getStringWidth(line.substring(0, match.start()));
+                int endX = x + this.getStringWidth(line.substring(0, match.end()));
                 drawContext.fill(startX, y - 1, endX, y + this.fontHeight + 1,
                         GlobalWidgetConfigOption.MATCH_BACKGROUND);
-                start = lowerLine.indexOf(term, end);
             }
         }
 

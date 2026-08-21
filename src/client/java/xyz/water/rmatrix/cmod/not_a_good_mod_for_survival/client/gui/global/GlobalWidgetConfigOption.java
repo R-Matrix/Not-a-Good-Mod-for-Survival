@@ -1,8 +1,6 @@
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetBase;
@@ -83,22 +81,12 @@ public final class GlobalWidgetConfigOption extends WidgetConfigOption {
     }
 
     private void renderConfigName(DrawContext drawContext) {
-        String lowerName = this.configName.toLowerCase(Locale.ROOT);
-        List<int[]> matches = new ArrayList<>();
-
         for (String term : this.highlightTerms) {
-            int start = lowerName.indexOf(term);
-
-            while (start >= 0) {
-                matches.add(new int[]{start, start + term.length()});
-                start = lowerName.indexOf(term, start + term.length());
+            for (GlobalSearchText.Match match : GlobalSearchText.findMatches(this.configName, term)) {
+                int startX = this.x + this.getStringWidth(this.configName.substring(0, match.start()));
+                int endX = this.x + this.getStringWidth(this.configName.substring(0, match.end()));
+                drawContext.fill(startX, this.y + 6, endX, this.y + 16, MATCH_BACKGROUND);
             }
-        }
-
-        for (int[] match : matches) {
-            int startX = this.x + this.getStringWidth(this.configName.substring(0, match[0]));
-            int endX = this.x + this.getStringWidth(this.configName.substring(0, match[1]));
-        drawContext.fill(startX, this.y + 6, endX, this.y + 16, MATCH_BACKGROUND);
         }
 
         this.drawStringWithShadow(this.x, this.y + 8, 0xFFFFFFFF, this.configName, drawContext);
