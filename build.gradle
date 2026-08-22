@@ -52,6 +52,10 @@ dependencies {
 	modRuntimeOnly "fi.dy.masa.litematica:litematica-fabric-${project.minecraft_version}:${project.litematica_version}"
 	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
+	// Used like TweakerMore: conditional @Pseudo Mixins can target Xaero World Map
+	// without loading Xaero classes when the optional mod is absent.
+	include(modImplementation("me.fallenbreath:conditional-mixin-fabric:${project.conditionalmixin_version}"))
+
 	// Used by the global Malilib search to index Chinese config text by pinyin.
 	implementation "com.belerweb:pinyin4j:2.5.1"
 	include "com.belerweb:pinyin4j:2.5.1"

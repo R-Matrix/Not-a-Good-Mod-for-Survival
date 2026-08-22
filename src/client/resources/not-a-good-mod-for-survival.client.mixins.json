@@ -17,7 +17,8 @@
 		"global_search.GuiBaseAccessor",
 		"global_search.ButtonBaseAccessor",
 		"global_search.WidgetListBaseMixin",
-		"global_search.WidgetConfigOptionMixin"
+		"global_search.WidgetConfigOptionMixin",
+		"xaero.WorldMapSessionMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

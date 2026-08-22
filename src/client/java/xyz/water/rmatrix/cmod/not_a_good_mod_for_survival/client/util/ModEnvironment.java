@@ -5,6 +5,7 @@ import net.fabricmc.loader.api.FabricLoader;
 /** Provides the runtime checks used by optional client integrations. */
 public final class ModEnvironment {
     public static final String LITEMATICA_MOD_ID = "litematica";
+    public static final String XAERO_WORLD_MAP_MOD_ID = "xaeroworldmap";
 
     private ModEnvironment() {
     }
@@ -15,5 +16,9 @@ public final class ModEnvironment {
 
     public static boolean isLitematicaLoaded() {
         return isModLoaded(LITEMATICA_MOD_ID);
+    }
+
+    public static boolean isXaeroWorldMapLoaded() {
+        return isModLoaded(XAERO_WORLD_MAP_MOD_ID);
     }
 }

@@ -37,9 +37,11 @@
 		"minecraft": "~1.21.4",
 		"java": ">=21",
 		"fabric-api": "*",
-		"malilib": ">=0.23.5"
+		"malilib": ">=0.23.5",
+		"conditional-mixin": ">=0.6.4"
 	},
 	"suggests": {
-		"litematica": ">=0.21.7"
+		"litematica": ">=0.21.7",
+		"xaeroworldmap": "*"
 	}
 }
