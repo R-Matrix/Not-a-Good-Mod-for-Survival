@@ -49,11 +49,6 @@ public final class ToolConfigs {
             "Detect TweakerMore conditional configurations and mark unavailable options in red.")
             .apply(CONFIG_KEY);
 
-    public static final ConfigBoolean ENABLE_XAERO_WORLD_MAP_NO_SESSION_FINALIZATION_WAIT = new ConfigBoolean(
-            "enableXaeroWorldMapNoSessionFinalizationWait", false,
-            "Skip Xaero World Map session finalization waiting when leaving a world.")
-            .apply(CONFIG_KEY);
-
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
             ENABLE_GLOBAL_MALILIB_SEARCH,
             HIGHLIGHT_SEARCH_RESULTS,
@@ -62,8 +57,7 @@ public final class ToolConfigs {
             SHOW_CONFIG_SOURCE,
             SEARCH_ENGLISH_CONFIG_NAMES_IN_CHINESE,
             SEARCH_COMMENTS,
-            ENABLE_TWEAKER_MORE_COMPATIBILITY,
-            ENABLE_XAERO_WORLD_MAP_NO_SESSION_FINALIZATION_WAIT
+            ENABLE_TWEAKER_MORE_COMPATIBILITY
     );
 
     private ToolConfigs() {

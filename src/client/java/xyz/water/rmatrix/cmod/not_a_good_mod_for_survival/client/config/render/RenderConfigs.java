@@ -2,6 +2,7 @@ package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.render;
 
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.IConfigBase;
+import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
 import fi.dy.masa.malilib.config.options.ConfigDouble;
 import fi.dy.masa.malilib.config.options.ConfigInteger;
@@ -12,6 +13,7 @@ public final class RenderConfigs {
     private static final String DEBUG_RENDER_CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.debugRender";
     private static final String FIREWORKS_CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.fireworks";
     private static final String SIGNS_CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.signs";
+    private static final String MAP_CATALOG_CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.mapCatalogMaps";
 
     public static final class DebugRender {
         public static final ConfigBooleanHotkeyed ENTITY_VIEW_ARROW = new ConfigBooleanHotkeyed(
@@ -96,10 +98,45 @@ public final class RenderConfigs {
         }
     }
 
+    public static final class MapCatalogMaps {
+        public static final ConfigBoolean ENABLE_MAP_CATALOG_DISPLAY = new ConfigBoolean(
+                "enableMapCatalogDisplay", false,
+                "Display synchronized server map numbers and coverage borders in Xaero's World Map.")
+                .apply(MAP_CATALOG_CONFIG_KEY);
+        public static final ConfigBoolean ONLY_LEVEL_ONE_MAPS = new ConfigBoolean(
+                "onlyLevelOneMaps", true,
+                "Only display maps at scale level 1, covering 8x8 chunks.")
+                .apply(MAP_CATALOG_CONFIG_KEY);
+        public static final ConfigBoolean ONLY_PLAYER_MAPS = new ConfigBoolean(
+                "onlyPlayerMaps", true,
+                "Hide maps that contain exploration-style map decorations.")
+                .apply(MAP_CATALOG_CONFIG_KEY);
+        public static final ConfigBoolean SHOW_MAP_NUMBERS = new ConfigBoolean(
+                "showMapNumbers", true,
+                "Show compressed map numbers for each map coverage group.")
+                .apply(MAP_CATALOG_CONFIG_KEY);
+        public static final ConfigBoolean SHOW_MAP_BORDERS = new ConfigBoolean(
+                "showMapBorders", true,
+                "Draw the coverage border for each map coverage group.")
+                .apply(MAP_CATALOG_CONFIG_KEY);
+
+        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
+                ENABLE_MAP_CATALOG_DISPLAY,
+                ONLY_LEVEL_ONE_MAPS,
+                ONLY_PLAYER_MAPS,
+                SHOW_MAP_NUMBERS,
+                SHOW_MAP_BORDERS
+        );
+
+        private MapCatalogMaps() {
+        }
+    }
+
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.<IConfigBase>builder()
             .addAll(DebugRender.OPTIONS)
             .addAll(Fireworks.OPTIONS)
             .addAll(Signs.OPTIONS)
+            .addAll(MapCatalogMaps.OPTIONS)
             .build();
 
     private RenderConfigs() {
