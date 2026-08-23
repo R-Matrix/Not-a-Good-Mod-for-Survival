@@ -21,6 +21,19 @@ repositories {
 		name = "Terraformers"
 		url = "https://maven.terraformersmc.com/releases"
 	}
+
+	// Xaero's World Map is an optional compile-time API for the client renderer.
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Modrinth"
+				url = "https://api.modrinth.com/maven"
+			}
+		}
+		filter {
+			includeGroup "maven.modrinth"
+		}
+	}
 }
 
 loom {
@@ -51,10 +64,7 @@ dependencies {
 	modCompileOnly "fi.dy.masa.litematica:litematica-fabric-${project.minecraft_version}:${project.litematica_version}"
 	modRuntimeOnly "fi.dy.masa.litematica:litematica-fabric-${project.minecraft_version}:${project.litematica_version}"
 	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
-
-	// Used like TweakerMore: conditional @Pseudo Mixins can target Xaero World Map
-	// without loading Xaero classes when the optional mod is absent.
-	include(modImplementation("me.fallenbreath:conditional-mixin-fabric:${project.conditionalmixin_version}"))
+	modCompileOnly "maven.modrinth:NcUtCpym:${project.xaero_world_map_maven_version}"
 
 	// Used by the global Malilib search to index Chinese config text by pinyin.
 	implementation "com.belerweb:pinyin4j:2.5.1"
