@@ -6,6 +6,7 @@ import net.minecraft.util.Identifier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.server.mapcatalog.MapCatalogIntegratedServer;
 
 public class NotAGoodModForSurvival implements ModInitializer {
 	public static final String MOD_ID = "not-a-good-mod-for-survival";
@@ -19,6 +20,7 @@ public class NotAGoodModForSurvival implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("{} initialized", MOD_NAME);
+		MapCatalogIntegratedServer.init();
 	}
 
 	public static Identifier id(String path) {
