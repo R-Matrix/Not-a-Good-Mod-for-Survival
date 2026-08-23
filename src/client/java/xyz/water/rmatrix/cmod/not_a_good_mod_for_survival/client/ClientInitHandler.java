@@ -15,6 +15,7 @@ import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Hotkeys;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.GuiConfigs;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.litematica.LitematicaClientIntegration;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.xaero.MapCatalogXaeroIntegration;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.input.InputHandler;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.ModEnvironment;
 
@@ -41,6 +42,19 @@ public final class ClientInitHandler implements IInitializationHandler {
         } else {
             NotAGoodModForSurvival.LOGGER.info(
                     "Litematica was not detected; skipping the optional material HUD integration.");
+        }
+
+        if (ModEnvironment.isXaeroWorldMapLoaded()) {
+            try {
+                MapCatalogXaeroIntegration.register();
+            } catch (LinkageError | RuntimeException exception) {
+                NotAGoodModForSurvival.LOGGER.warn(
+                        "Xaero World Map was detected, but its optional MapCatalogSync integration could not be registered.",
+                        exception);
+            }
+        } else {
+            NotAGoodModForSurvival.LOGGER.info(
+                    "Xaero World Map was not detected; skipping the optional MapCatalogSync map renderer.");
         }
     }
 
