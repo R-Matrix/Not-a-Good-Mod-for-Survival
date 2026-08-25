@@ -28,6 +28,7 @@ public final class MapCatalogSyncClient {
 
     private static Map<Integer, MapCatalogMapInfo> maps = Map.of();
     private static UUID worldSessionId = EMPTY_SESSION;
+    private static long catalogRevision;
     private static int highestMapId = -1;
     private static Identifier syncedDimension;
     private static Identifier lastRequestedDimension;
@@ -72,7 +73,10 @@ public final class MapCatalogSyncClient {
             return;
         }
         boolean dimensionChanged = syncedDimension == null || !syncedDimension.equals(viewedDimension);
-        request(!completed || dimensionChanged, viewedDimension);
+        boolean refreshDue = System.currentTimeMillis() - lastRequestMillis >= REQUEST_INTERVAL_MS;
+        if (!completed || dimensionChanged || refreshDue) {
+            request(!completed || dimensionChanged, viewedDimension);
+        }
     }
 
     public static List<MapCatalogMapInfo> snapshot() {
@@ -83,12 +87,21 @@ public final class MapCatalogSyncClient {
         return completed;
     }
 
+    public static boolean canCommunicate() {
+        return MinecraftClient.getInstance().getNetworkHandler() != null
+                && ClientPlayNetworking.canSend(MapCatalogSyncRequestC2S.ID);
+    }
+
     public static UUID worldSessionId() {
         return worldSessionId;
     }
 
     public static int highestMapId() {
         return highestMapId;
+    }
+
+    public static long catalogRevision() {
+        return catalogRevision;
     }
 
     private static void request(boolean forceFull, Identifier requestedDimension) {
@@ -105,14 +118,14 @@ public final class MapCatalogSyncClient {
 
         boolean effectiveFull = forceFull || !completed;
         UUID knownSession = completed ? worldSessionId : EMPTY_SESSION;
-        int knownMax = completed ? highestMapId : -1;
+        long knownRevision = completed ? catalogRevision : 0L;
         lastRequestedDimension = requestedDimension != null
                 ? requestedDimension
                 : client.world == null ? null : client.world.getRegistryKey().getValue();
         ClientPlayNetworking.send(new MapCatalogSyncRequestC2S(
                 MapCatalogPacketCodecs.PROTOCOL_VERSION,
                 knownSession,
-                knownMax,
+                knownRevision,
                 effectiveFull
         ));
         lastRequestMillis = now;
@@ -128,7 +141,7 @@ public final class MapCatalogSyncClient {
         }
 
         if (payload.entryCount() < 0 || payload.entryCount() > MAX_TRANSACTION_ENTRIES
-                || payload.highestMapId() < -1) {
+                || payload.catalogRevision() < 0L || payload.highestMapId() < -1) {
             abortTransaction("invalid synchronization header");
             return;
         }
@@ -143,6 +156,7 @@ public final class MapCatalogSyncClient {
         transaction = new Transaction(
                 payload.syncMode(),
                 payload.worldSessionId(),
+                payload.catalogRevision(),
                 payload.highestMapId(),
                 payload.entryCount(),
                 new HashMap<>(),
@@ -178,6 +192,7 @@ public final class MapCatalogSyncClient {
 
         transaction = null;
         boolean valid = current.worldSessionId().equals(payload.worldSessionId())
+                && current.catalogRevision() == payload.catalogRevision()
                 && current.highestMapId() == payload.highestMapId()
                 && current.receivedCount() == current.expectedCount();
         if (!valid) {
@@ -194,6 +209,7 @@ public final class MapCatalogSyncClient {
         }
 
         worldSessionId = current.worldSessionId();
+        catalogRevision = current.catalogRevision();
         highestMapId = current.highestMapId();
         syncedDimension = current.requestedDimension();
         lastRequestedDimension = syncedDimension;
@@ -217,6 +233,7 @@ public final class MapCatalogSyncClient {
     private static void reset() {
         maps = Map.of();
         worldSessionId = EMPTY_SESSION;
+        catalogRevision = 0L;
         highestMapId = -1;
         syncedDimension = null;
         lastRequestedDimension = null;
@@ -229,6 +246,7 @@ public final class MapCatalogSyncClient {
     private static final class Transaction {
         private final MapCatalogSyncMode mode;
         private final UUID worldSessionId;
+        private final long catalogRevision;
         private final int highestMapId;
         private final int expectedCount;
         private final Map<Integer, MapCatalogMapInfo> entries;
@@ -238,6 +256,7 @@ public final class MapCatalogSyncClient {
         private Transaction(
                 MapCatalogSyncMode mode,
                 UUID worldSessionId,
+                long catalogRevision,
                 int highestMapId,
                 int expectedCount,
                 Map<Integer, MapCatalogMapInfo> entries,
@@ -245,6 +264,7 @@ public final class MapCatalogSyncClient {
         ) {
             this.mode = mode;
             this.worldSessionId = worldSessionId;
+            this.catalogRevision = catalogRevision;
             this.highestMapId = highestMapId;
             this.expectedCount = expectedCount;
             this.entries = entries;
@@ -261,6 +281,10 @@ public final class MapCatalogSyncClient {
 
         private int highestMapId() {
             return highestMapId;
+        }
+
+        private long catalogRevision() {
+            return catalogRevision;
         }
 
         private int expectedCount() {

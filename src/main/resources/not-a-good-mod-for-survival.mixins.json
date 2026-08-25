@@ -4,7 +4,8 @@
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"example.ExampleMixin",
-		"mapcatalog.ServerWorldMapCatalogMixin"
+		"mapcatalog.ServerWorldMapCatalogMixin",
+		"mapcatalog.MapStateMapCatalogMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

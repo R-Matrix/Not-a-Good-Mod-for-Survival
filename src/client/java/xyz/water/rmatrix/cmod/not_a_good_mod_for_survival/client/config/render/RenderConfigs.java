@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
+import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.config.options.ConfigDouble;
 import fi.dy.masa.malilib.config.options.ConfigInteger;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
@@ -101,7 +102,9 @@ public final class RenderConfigs {
     public static final class MapCatalogMaps {
         public static final ConfigBoolean ENABLE_MAP_CATALOG_DISPLAY = new ConfigBoolean(
                 "enableMapCatalogDisplay", false,
-                "Display synchronized server map numbers and coverage borders in Xaero's World Map.")
+                "Display synchronized server map numbers and coverage borders in Xaero's World Map.\n\n"
+                        + "§6NOTE: This feature requires the §dMapCatalog map synchronization protocol§6 "
+                        + "to be enabled on the server.§r")
                 .apply(MAP_CATALOG_CONFIG_KEY);
         public static final ConfigBoolean ONLY_LEVEL_ONE_MAPS = new ConfigBoolean(
                 "onlyLevelOneMaps", true,
@@ -115,9 +118,33 @@ public final class RenderConfigs {
                 "showMapNumbers", true,
                 "Show compressed map numbers for each map coverage group.")
                 .apply(MAP_CATALOG_CONFIG_KEY);
-        public static final ConfigBoolean SHOW_MAP_BORDERS = new ConfigBoolean(
-                "showMapBorders", true,
-                "Draw the coverage border for each map coverage group.")
+        public static final ConfigBoolean RENDER_MAP_RANGES = new ConfigBoolean(
+                "renderMapRanges", true,
+                "Render the coverage range for each map coverage group.")
+                .apply(MAP_CATALOG_CONFIG_KEY);
+        public static final ConfigBoolean SHOW_MAP_BANNERS = new ConfigBoolean(
+                "showMapBanners", true,
+                "Display banner decorations from synchronized maps in Xaero's World Map.")
+                .apply(MAP_CATALOG_CONFIG_KEY);
+        public static final ConfigColor MAP_BORDER_LEVEL_1_COLOR = new ConfigColor(
+                "mapBorderLevel1Color", "#FFFFB52E",
+                "Coverage border color for map scale level 1.")
+                .apply(MAP_CATALOG_CONFIG_KEY);
+        public static final ConfigColor MAP_BORDER_LEVEL_2_COLOR = new ConfigColor(
+                "mapBorderLevel2Color", "#FF55FFFF",
+                "Coverage border color for map scale level 2.")
+                .apply(MAP_CATALOG_CONFIG_KEY);
+        public static final ConfigColor MAP_BORDER_LEVEL_3_COLOR = new ConfigColor(
+                "mapBorderLevel3Color", "#FF55FF55",
+                "Coverage border color for map scale level 3.")
+                .apply(MAP_CATALOG_CONFIG_KEY);
+        public static final ConfigColor MAP_BORDER_LEVEL_4_COLOR = new ConfigColor(
+                "mapBorderLevel4Color", "#FFFF55FF",
+                "Coverage border color for map scale level 4.")
+                .apply(MAP_CATALOG_CONFIG_KEY);
+        public static final ConfigColor MAP_BORDER_LEVEL_5_COLOR = new ConfigColor(
+                "mapBorderLevel5Color", "#FFFF5555",
+                "Coverage border color for map scale level 5.")
                 .apply(MAP_CATALOG_CONFIG_KEY);
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
@@ -125,7 +152,13 @@ public final class RenderConfigs {
                 ONLY_LEVEL_ONE_MAPS,
                 ONLY_PLAYER_MAPS,
                 SHOW_MAP_NUMBERS,
-                SHOW_MAP_BORDERS
+                RENDER_MAP_RANGES,
+                SHOW_MAP_BANNERS,
+                MAP_BORDER_LEVEL_1_COLOR,
+                MAP_BORDER_LEVEL_2_COLOR,
+                MAP_BORDER_LEVEL_3_COLOR,
+                MAP_BORDER_LEVEL_4_COLOR,
+                MAP_BORDER_LEVEL_5_COLOR
         );
 
         private MapCatalogMaps() {

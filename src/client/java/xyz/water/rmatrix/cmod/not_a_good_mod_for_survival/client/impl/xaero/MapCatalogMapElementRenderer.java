@@ -71,9 +71,9 @@ final class MapCatalogMapElementRenderer extends MapElementRenderer<MapCatalogMa
         MatrixStack matrices = guiGraphics.getMatrices();
         int half = (int)Math.ceil(element.coverageBlocks() * scale / 2.0D);
         int border = Math.max(1, Math.min(4, (int)Math.ceil(scale)));
-        int borderColor = hovered ? 0xFFFFE66D : 0xFFFFB52E;
+        int borderColor = getBorderColor(element.representative().scale(), hovered);
 
-        if (RenderConfigs.MapCatalogMaps.SHOW_MAP_BORDERS.getBooleanValue()) {
+        if (RenderConfigs.MapCatalogMaps.RENDER_MAP_RANGES.getBooleanValue()) {
             guiGraphics.fill(-half, -half, half, -half + border, borderColor);
             guiGraphics.fill(-half, half - border, half, half, borderColor);
             guiGraphics.fill(-half, -half, -half + border, half, borderColor);
@@ -103,7 +103,9 @@ final class MapCatalogMapElementRenderer extends MapElementRenderer<MapCatalogMa
     @Override
     public boolean shouldRender(int location, boolean pre) {
         return location == MapElementRenderLocation.WORLD_MAP
-                && RenderConfigs.MapCatalogMaps.ENABLE_MAP_CATALOG_DISPLAY.getBooleanValue();
+                && RenderConfigs.MapCatalogMaps.ENABLE_MAP_CATALOG_DISPLAY.getBooleanValue()
+                && (RenderConfigs.MapCatalogMaps.RENDER_MAP_RANGES.getBooleanValue()
+                || RenderConfigs.MapCatalogMaps.SHOW_MAP_NUMBERS.getBooleanValue());
     }
 
     @Override
@@ -114,5 +116,23 @@ final class MapCatalogMapElementRenderer extends MapElementRenderer<MapCatalogMa
     @Override
     public boolean shouldBeDimScaled() {
         return false;
+    }
+
+    private static int getBorderColor(byte scale, boolean hovered) {
+        int color = switch (Math.max(0, Math.min(4, scale))) {
+            case 1 -> RenderConfigs.MapCatalogMaps.MAP_BORDER_LEVEL_2_COLOR.getIntegerValue();
+            case 2 -> RenderConfigs.MapCatalogMaps.MAP_BORDER_LEVEL_3_COLOR.getIntegerValue();
+            case 3 -> RenderConfigs.MapCatalogMaps.MAP_BORDER_LEVEL_4_COLOR.getIntegerValue();
+            case 4 -> RenderConfigs.MapCatalogMaps.MAP_BORDER_LEVEL_5_COLOR.getIntegerValue();
+            default -> RenderConfigs.MapCatalogMaps.MAP_BORDER_LEVEL_1_COLOR.getIntegerValue();
+        };
+        if (!hovered) {
+            return color;
+        }
+        int alpha = color >>> 24;
+        int red = Math.min(255, ((color >>> 16) & 0xFF) + 48);
+        int green = Math.min(255, ((color >>> 8) & 0xFF) + 48);
+        int blue = Math.min(255, (color & 0xFF) + 48);
+        return alpha << 24 | red << 16 | green << 8 | blue;
     }
 }

@@ -149,8 +149,10 @@ final class MapCatalogMapElementReader extends MapElementReader<MapCatalogMapDis
 
     @Override
     public CursorBox getTooltip(MapCatalogMapDisplayGroup element, MapCatalogMapElementContext context, boolean overMenu) {
-        return new CursorBox(Text.literal(element.label())
-                .append(Text.literal(" \n "))
-                .append(Text.literal(element.fullIdRanges())));
+        return new CursorBox(Text.translatable(
+                "not-a-good-mod-for-survival.gui.xaero.map_catalog.map.tooltip",
+                element.label(),
+                element.fullIdRanges()
+        ));
     }
 }
