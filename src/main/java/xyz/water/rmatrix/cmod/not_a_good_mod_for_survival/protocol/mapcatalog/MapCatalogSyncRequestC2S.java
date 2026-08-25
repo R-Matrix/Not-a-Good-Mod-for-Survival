@@ -11,7 +11,7 @@ import java.util.UUID;
 public record MapCatalogSyncRequestC2S(
         int protocolVersion,
         UUID worldSessionId,
-        int knownMaxMapId,
+        long knownCatalogRevision,
         boolean forceFullSync
 ) implements CustomPayload {
     public static final CustomPayload.Id<MapCatalogSyncRequestC2S> ID =
@@ -22,8 +22,8 @@ public record MapCatalogSyncRequestC2S(
             MapCatalogSyncRequestC2S::protocolVersion,
             MapCatalogPacketCodecs.UUID_CODEC,
             MapCatalogSyncRequestC2S::worldSessionId,
-            PacketCodecs.VAR_INT,
-            MapCatalogSyncRequestC2S::knownMaxMapId,
+            MapCatalogPacketCodecs.LONG_CODEC,
+            MapCatalogSyncRequestC2S::knownCatalogRevision,
             PacketCodecs.BOOLEAN,
             MapCatalogSyncRequestC2S::forceFullSync,
             MapCatalogSyncRequestC2S::new

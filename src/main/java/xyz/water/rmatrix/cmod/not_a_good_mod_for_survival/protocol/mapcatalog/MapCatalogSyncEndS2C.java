@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public record MapCatalogSyncEndS2C(
         UUID worldSessionId,
+        long catalogRevision,
         int highestMapId
 ) implements CustomPayload {
     public static final CustomPayload.Id<MapCatalogSyncEndS2C> ID =
@@ -18,6 +19,8 @@ public record MapCatalogSyncEndS2C(
     public static final PacketCodec<RegistryByteBuf, MapCatalogSyncEndS2C> CODEC = PacketCodec.tuple(
             MapCatalogPacketCodecs.UUID_CODEC,
             MapCatalogSyncEndS2C::worldSessionId,
+            MapCatalogPacketCodecs.LONG_CODEC,
+            MapCatalogSyncEndS2C::catalogRevision,
             PacketCodecs.VAR_INT,
             MapCatalogSyncEndS2C::highestMapId,
             MapCatalogSyncEndS2C::new

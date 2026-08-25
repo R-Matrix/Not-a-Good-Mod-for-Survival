@@ -14,6 +14,7 @@ public final class MapCatalogXaeroIntegration {
     private static boolean installed;
     private static boolean viewedDimensionFailureLogged;
     private static MapCatalogMapElementRenderer renderer;
+    private static MapCatalogBannerElementRenderer bannerRenderer;
 
     private MapCatalogXaeroIntegration() {
     }
@@ -57,6 +58,11 @@ public final class MapCatalogXaeroIntegration {
             MapCatalogMapElementReader reader = new MapCatalogMapElementReader();
             renderer = new MapCatalogMapElementRenderer(context, provider, reader);
             WorldMap.mapElementRenderHandler.add(renderer);
+            MapCatalogBannerElementContext bannerContext = new MapCatalogBannerElementContext();
+            MapCatalogBannerElementProvider bannerProvider = new MapCatalogBannerElementProvider();
+            MapCatalogBannerElementReader bannerReader = new MapCatalogBannerElementReader();
+            bannerRenderer = new MapCatalogBannerElementRenderer(bannerContext, bannerProvider, bannerReader);
+            WorldMap.mapElementRenderHandler.add(bannerRenderer);
             installed = true;
             NotAGoodModForSurvival.LOGGER.info("MapCatalogSync Xaero World Map integration initialized.");
         } catch (LinkageError | RuntimeException exception) {

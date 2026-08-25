@@ -11,6 +11,7 @@ import java.util.UUID;
 public record MapCatalogSyncStartS2C(
         MapCatalogSyncMode syncMode,
         UUID worldSessionId,
+        long catalogRevision,
         int highestMapId,
         int entryCount
 ) implements CustomPayload {
@@ -22,6 +23,8 @@ public record MapCatalogSyncStartS2C(
             MapCatalogSyncStartS2C::syncMode,
             MapCatalogPacketCodecs.UUID_CODEC,
             MapCatalogSyncStartS2C::worldSessionId,
+            MapCatalogPacketCodecs.LONG_CODEC,
+            MapCatalogSyncStartS2C::catalogRevision,
             PacketCodecs.VAR_INT,
             MapCatalogSyncStartS2C::highestMapId,
             PacketCodecs.VAR_INT,

@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -49,11 +50,14 @@ public final class MapCatalogIntegratedServer {
     private static final int REQUEST_COOLDOWN_TICKS = 20;
 
     private static final Map<Integer, MapCatalogMapInfo> MAPS = new HashMap<>();
+    private static final Map<Integer, Long> MAP_REVISIONS = new HashMap<>();
+    private static final Map<MapState, Integer> MAP_IDS = new IdentityHashMap<>();
     private static final Map<UUID, Integer> LAST_REQUEST_TICKS = new HashMap<>();
 
     private static MinecraftServer server;
     private static UUID worldSessionId = EMPTY_SESSION;
     private static int highestMapId = -1;
+    private static long catalogRevision;
     private static boolean initialized;
     private static boolean receiverRegistered;
 
@@ -99,8 +103,11 @@ public final class MapCatalogIntegratedServer {
         }
 
         MAPS.clear();
+        MAP_REVISIONS.clear();
+        MAP_IDS.clear();
         LAST_REQUEST_TICKS.clear();
         highestMapId = -1;
+        catalogRevision = 0L;
         worldSessionId = EMPTY_SESSION;
         server = null;
     }
@@ -123,9 +130,18 @@ public final class MapCatalogIntegratedServer {
             return;
         }
 
-        MapCatalogMapInfo mapInfo = fromMapState(mapId.id(), mapState);
-        MAPS.put(mapInfo.mapId(), mapInfo);
-        highestMapId = Math.max(highestMapId, mapInfo.mapId());
+        updateMapState(mapId.id(), mapState, true);
+    }
+
+    public static void onMapStateBannerChanged(MapState mapState) {
+        if (server == null || mapState == null) {
+            return;
+        }
+
+        Integer mapId = MAP_IDS.get(mapState);
+        if (mapId != null) {
+            updateMapState(mapId, mapState, true);
+        }
     }
 
     private static void handleRequest(MapCatalogSyncRequestC2S payload, ServerPlayNetworking.Context context) {
@@ -155,7 +171,8 @@ public final class MapCatalogIntegratedServer {
         List<MapCatalogMapInfo> maps = snapshotMaps(playerDimension);
         if (!fullSync) {
             maps = maps.stream()
-                    .filter(map -> map.mapId() > payload.knownMaxMapId())
+                    .filter(map -> MAP_REVISIONS.getOrDefault(map.mapId(), 0L)
+                            > payload.knownCatalogRevision())
                     .toList();
         }
 
@@ -165,6 +182,7 @@ public final class MapCatalogIntegratedServer {
         ServerPlayNetworking.send(player, new MapCatalogSyncStartS2C(
                 mode,
                 worldSessionId,
+                catalogRevision,
                 highestMapId,
                 maps.size()));
 
@@ -172,7 +190,8 @@ public final class MapCatalogIntegratedServer {
             int end = Math.min(start + MapCatalogPacketCodecs.MAX_BATCH_ENTRIES, maps.size());
             ServerPlayNetworking.send(player, new MapCatalogSyncBatchS2C(maps.subList(start, end)));
         }
-        ServerPlayNetworking.send(player, new MapCatalogSyncEndS2C(worldSessionId, highestMapId));
+        ServerPlayNetworking.send(player, new MapCatalogSyncEndS2C(
+                worldSessionId, catalogRevision, highestMapId));
     }
 
     private static void sendDenied(ServerPlayerEntity player) {
@@ -180,6 +199,7 @@ public final class MapCatalogIntegratedServer {
             ServerPlayNetworking.send(player, new MapCatalogSyncStartS2C(
                     MapCatalogSyncMode.DENIED,
                     worldSessionId,
+                    catalogRevision,
                     highestMapId,
                     0));
         }
@@ -194,7 +214,10 @@ public final class MapCatalogIntegratedServer {
 
     private static void scanMaps(MinecraftServer currentServer) {
         MAPS.clear();
+        MAP_REVISIONS.clear();
+        MAP_IDS.clear();
         highestMapId = -1;
+        catalogRevision = 0L;
         Path dataDirectory = currentServer.getSavePath(WorldSavePath.ROOT).resolve("data");
         if (!Files.isDirectory(dataDirectory)) {
             return;
@@ -209,9 +232,7 @@ public final class MapCatalogIntegratedServer {
                         try {
                             MapState mapState = getMapState(overworld, mapFile.mapId());
                             if (mapState != null) {
-                                MapCatalogMapInfo mapInfo = fromMapState(mapFile.mapId(), mapState);
-                                MAPS.put(mapInfo.mapId(), mapInfo);
-                                highestMapId = Math.max(highestMapId, mapInfo.mapId());
+                                updateMapState(mapFile.mapId(), mapState, false);
                             }
                         } catch (RuntimeException exception) {
                             NotAGoodModForSurvival.LOGGER.warn(
@@ -262,6 +283,22 @@ public final class MapCatalogIntegratedServer {
                 mapState.scale,
                 mapState.locked,
                 new MapCatalogClassification(mapState.hasExplorationMapDecoration(), banners));
+    }
+
+    private static void updateMapState(int mapId, MapState mapState, boolean markChanged) {
+        MapCatalogMapInfo mapInfo = fromMapState(mapId, mapState);
+        MapCatalogMapInfo previous = MAPS.put(mapId, mapInfo);
+        MAP_IDS.entrySet().removeIf(entry -> entry.getValue().equals(mapId) && entry.getKey() != mapState);
+        MAP_IDS.put(mapState, mapId);
+        highestMapId = Math.max(highestMapId, mapId);
+
+        if (!MAP_REVISIONS.containsKey(mapId)) {
+            MAP_REVISIONS.put(mapId, catalogRevision);
+        }
+        if (markChanged && !mapInfo.equals(previous)) {
+            catalogRevision++;
+            MAP_REVISIONS.put(mapId, catalogRevision);
+        }
     }
 
     private record MapFile(Path path, int mapId) {
