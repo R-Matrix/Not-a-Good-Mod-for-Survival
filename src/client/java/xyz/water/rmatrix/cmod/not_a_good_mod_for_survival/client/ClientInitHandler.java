@@ -36,12 +36,12 @@ public final class ClientInitHandler implements IInitializationHandler {
             } catch (LinkageError | RuntimeException exception) {
                 NotAGoodModForSurvival.LOGGER.warn(
                         "Litematica was detected, but its optional integration could not be initialized. "
-                                + "The material HUD integration will be unavailable.",
+                                + "The material HUD and projection display-range integrations will be unavailable.",
                         exception);
             }
         } else {
             NotAGoodModForSurvival.LOGGER.info(
-                    "Litematica was not detected; skipping the optional material HUD integration.");
+                    "Litematica was not detected; skipping the optional material HUD and projection display-range integrations.");
         }
 
         if (ModEnvironment.isXaeroWorldMapLoaded()) {

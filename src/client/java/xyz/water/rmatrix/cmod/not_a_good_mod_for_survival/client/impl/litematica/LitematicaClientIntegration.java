@@ -22,13 +22,26 @@ public final class LitematicaClientIntegration {
 
         registered = true;
         ClientTickEvents.END_CLIENT_TICK.register(MaterialHudController::tick);
+        ClientTickEvents.END_CLIENT_TICK.register(SchematicRenderRangeManager::tick);
+        fi.dy.masa.malilib.event.InputEventHandler.getInputManager()
+                .registerMouseInputHandler(SchematicRenderRangeManager.getInstance());
+        fi.dy.masa.malilib.event.RenderEventHandler.getInstance()
+                .registerWorldPreWeatherRenderer(new SchematicRenderRangeRenderer());
         Hotkeys.EDIT_HUD.getKeybind().setCallback(new EditHudCallback());
+        Hotkeys.EDIT_PROJECTION_RENDER_RANGE.getKeybind().setCallback(new EditProjectionRenderRangeCallback());
     }
 
     private static final class EditHudCallback implements IHotkeyCallback {
         @Override
         public boolean onKeyAction(KeyAction action, IKeybind key) {
             return MaterialHudController.openEditor();
+        }
+    }
+
+    private static final class EditProjectionRenderRangeCallback implements IHotkeyCallback {
+        @Override
+        public boolean onKeyAction(KeyAction action, IKeybind key) {
+            return SchematicRenderRangeManager.getInstance().toggleEditor();
         }
     }
 }

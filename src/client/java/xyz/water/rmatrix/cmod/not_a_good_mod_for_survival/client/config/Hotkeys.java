@@ -24,11 +24,19 @@ public final class Hotkeys {
             ModEnvironment::isLitematicaLoaded,
             ModEnvironment.LITEMATICA_MOD_ID,
             "Litematica").apply(HOTKEYS_KEY);
+    public static final ConditionalConfigHotkey EDIT_PROJECTION_RENDER_RANGE = new ConditionalConfigHotkey(
+            "editProjectionRenderRangeKey",
+            "",
+            "Edit the display range of the selected Litematica projection.",
+            ModEnvironment::isLitematicaLoaded,
+            ModEnvironment.LITEMATICA_MOD_ID,
+            "Litematica").apply(HOTKEYS_KEY);
 
     /** All hotkeys, including options that are currently unavailable. */
     public static final List<ConfigHotkey> HOTKEY_LIST = ImmutableList.of(
             OPEN_GUI_SETTINGS,
-            EDIT_HUD
+            EDIT_HUD,
+            EDIT_PROJECTION_RENDER_RANGE
     );
 
     /** Hotkeys that can actually be registered in the current environment. */

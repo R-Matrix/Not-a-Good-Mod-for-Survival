@@ -15,6 +15,7 @@ public final class RenderConfigs {
     private static final String FIREWORKS_CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.fireworks";
     private static final String SIGNS_CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.signs";
     private static final String MAP_CATALOG_CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.mapCatalogMaps";
+    private static final String SCHEMATIC_RENDER_RANGE_CONFIG_KEY = NotAGoodModForSurvival.MOD_ID + ".config.schematicRenderRange";
 
     public static final class DebugRender {
         public static final ConfigBooleanHotkeyed ENTITY_VIEW_ARROW = new ConfigBooleanHotkeyed(
@@ -165,11 +166,46 @@ public final class RenderConfigs {
         }
     }
 
+    public static final class SchematicRenderRange {
+        public static final ConfigBoolean ENABLE = new ConfigBoolean(
+                "enableSchematicRenderRange", false,
+                "Limit the selected Litematica projection to its saved display range.")
+                .apply(SCHEMATIC_RENDER_RANGE_CONFIG_KEY);
+        public static final ConfigColor OUTLINE_COLOR = new ConfigColor(
+                "schematicRenderRangeOutlineColor", "#FF55FFFF",
+                "Color of the selected projection display-range outline.")
+                .apply(SCHEMATIC_RENDER_RANGE_CONFIG_KEY);
+        public static final ConfigColor SURFACE_COLOR = new ConfigColor(
+                "schematicRenderRangeSurfaceColor", "#2055FFFF",
+                "Translucent surface color of the selected projection display range.")
+                .apply(SCHEMATIC_RENDER_RANGE_CONFIG_KEY);
+        public static final ConfigDouble OUTLINE_LINE_WIDTH = new ConfigDouble(
+                "schematicRenderRangeOutlineLineWidth", 2.0D, 1.0D, 6.0D, true,
+                "Line width of the selected projection display-range outline, from 1.0 to 6.0.") {
+            @Override
+            protected double getClampedValue(double value) {
+                double steppedValue = Math.round(value * 10.0D) / 10.0D;
+                return super.getClampedValue(steppedValue);
+            }
+        }.apply(SCHEMATIC_RENDER_RANGE_CONFIG_KEY);
+
+        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
+                ENABLE,
+                OUTLINE_COLOR,
+                SURFACE_COLOR,
+                OUTLINE_LINE_WIDTH
+        );
+
+        private SchematicRenderRange() {
+        }
+    }
+
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.<IConfigBase>builder()
             .addAll(DebugRender.OPTIONS)
             .addAll(Fireworks.OPTIONS)
             .addAll(Signs.OPTIONS)
             .addAll(MapCatalogMaps.OPTIONS)
+            .addAll(SchematicRenderRange.OPTIONS)
             .build();
 
     private RenderConfigs() {
