@@ -114,9 +114,6 @@
   "not-a-good-mod-for-survival.config.hotkeys.prettyName.openGuiSettings": "打开设置",
   "not-a-good-mod-for-survival.config.hotkeys.comment.openGuiSettings": "打开本项目的设置界面。",
   "not-a-good-mod-for-survival.config.hotkeys.name.openGuiSettings": "打开设置",
-  "not-a-good-mod-for-survival.config.hotkeys.prettyName.editHudKey": "编辑 HUD",
-  "not-a-good-mod-for-survival.config.hotkeys.comment.editHudKey": "打开材料统计 HUD 编辑器。",
-  "not-a-good-mod-for-survival.config.hotkeys.name.editHudKey": "编辑 HUD",
   "not-a-good-mod-for-survival.hotkeys.category": "生存优化模组热键",
   "not-a-good-mod-for-survival.hotkeys.category.booleanConfigs": "布尔配置热键"
 }

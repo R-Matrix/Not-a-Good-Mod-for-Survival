@@ -14,7 +14,6 @@ import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Hotkeys;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.GuiConfigs;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.litematica.LitematicaClientIntegration;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.xaero.MapCatalogXaeroIntegration;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.input.InputHandler;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.ModEnvironment;
@@ -29,21 +28,6 @@ public final class ClientInitHandler implements IInitializationHandler {
 
         InputEventHandler.getKeybindManager().registerKeybindProvider(InputHandler.getInstance());
         Hotkeys.OPEN_GUI_SETTINGS.getKeybind().setCallback(new OpenSettingsCallback());
-
-        if (ModEnvironment.isLitematicaLoaded()) {
-            try {
-                LitematicaClientIntegration.register();
-            } catch (LinkageError | RuntimeException exception) {
-                NotAGoodModForSurvival.LOGGER.warn(
-                        "Litematica was detected, but its optional integration could not be initialized. "
-                                + "The material HUD integration will be unavailable.",
-                        exception);
-            }
-        } else {
-            NotAGoodModForSurvival.LOGGER.info(
-                    "Litematica was not detected; skipping the optional material HUD integration.");
-        }
-
         if (ModEnvironment.isXaeroWorldMapLoaded()) {
             try {
                 MapCatalogXaeroIntegration.register();
