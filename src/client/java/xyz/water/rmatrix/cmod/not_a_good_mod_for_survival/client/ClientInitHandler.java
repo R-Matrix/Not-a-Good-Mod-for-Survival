@@ -14,7 +14,7 @@ import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Configs;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Hotkeys;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.GuiConfigs;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.litematica.LitematicaClientIntegration;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.litematica.LitematicaSchematicRangeIntegration;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.xaero.MapCatalogXaeroIntegration;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.input.InputHandler;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.ModEnvironment;
@@ -32,16 +32,16 @@ public final class ClientInitHandler implements IInitializationHandler {
 
         if (ModEnvironment.isLitematicaLoaded()) {
             try {
-                LitematicaClientIntegration.register();
+                LitematicaSchematicRangeIntegration.register();
             } catch (LinkageError | RuntimeException exception) {
                 NotAGoodModForSurvival.LOGGER.warn(
                         "Litematica was detected, but its optional integration could not be initialized. "
-                                + "The material HUD and projection display-range integrations will be unavailable.",
+                                + "The projection display-range integration will be unavailable.",
                         exception);
             }
         } else {
             NotAGoodModForSurvival.LOGGER.info(
-                    "Litematica was not detected; skipping the optional material HUD and projection display-range integrations.");
+                    "Litematica was not detected; skipping the optional projection display-range integration.");
         }
 
         if (ModEnvironment.isXaeroWorldMapLoaded()) {

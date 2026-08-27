@@ -6,13 +6,12 @@ import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.Hotkeys;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.hud.MaterialHudController;
 
-/** Registers the client integration whose implementation depends on Litematica. */
-public final class LitematicaClientIntegration {
+/** Registers the projection display-range integration whose implementation depends on Litematica. */
+public final class LitematicaSchematicRangeIntegration {
     private static boolean registered;
 
-    private LitematicaClientIntegration() {
+    private LitematicaSchematicRangeIntegration() {
     }
 
     public static void register() {
@@ -21,7 +20,6 @@ public final class LitematicaClientIntegration {
         }
 
         registered = true;
-        ClientTickEvents.END_CLIENT_TICK.register(MaterialHudController::tick);
         ClientTickEvents.END_CLIENT_TICK.register(SchematicRenderRangeManager::tick);
         fi.dy.masa.malilib.event.InputEventHandler.getInputManager()
                 .registerMouseInputHandler(SchematicRenderRangeManager.getInstance());
@@ -29,17 +27,9 @@ public final class LitematicaClientIntegration {
                 .registerWorldPreWeatherRenderer(new SchematicRenderRangeRenderer());
         fi.dy.masa.malilib.event.RenderEventHandler.getInstance()
                 .registerWorldLastRenderer(new SchematicRenderRangeCornerMarkerRenderer());
-        Hotkeys.EDIT_HUD.getKeybind().setCallback(new EditHudCallback());
         Hotkeys.EDIT_PROJECTION_RENDER_RANGE.getKeybind().setCallback(new EditProjectionRenderRangeCallback());
         Hotkeys.CYCLE_RANGE_CORNER_MODE.getKeybind().setCallback(new CycleRangeCornerModeCallback());
         Hotkeys.RESET_PROJECTION_RENDER_RANGE.getKeybind().setCallback(new ResetProjectionRenderRangeCallback());
-    }
-
-    private static final class EditHudCallback implements IHotkeyCallback {
-        @Override
-        public boolean onKeyAction(KeyAction action, IKeybind key) {
-            return MaterialHudController.openEditor();
-        }
     }
 
     private static final class EditProjectionRenderRangeCallback implements IHotkeyCallback {
