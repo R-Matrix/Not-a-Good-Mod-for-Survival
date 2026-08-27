@@ -19,6 +19,12 @@
 		"global_search.WidgetListBaseMixin",
 		"global_search.WidgetConfigOptionMixin",
 		"litematica.ChunkRendererSchematicVboMixin"
+		,"litematica.GuiPlacementConfigurationMixin"
+		,"litematica.SchematicPlacementMixin"
+		,"litematica.SchematicPlacementManagerCacheAccess"
+		,"litematica.DataManagerGetRenderLayerRangeMixin"
+		,"litematica.TaskCountBlocksPlacementMixin"
+		,"litematica.OverlayRendererMismatchBatchMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

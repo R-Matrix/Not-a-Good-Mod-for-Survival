@@ -25,11 +25,11 @@ public abstract class ChunkRendererSchematicVboMixin {
             List<IntBoundingBox> boxes, Object value, Operation<Boolean> original,
             @Local(name = "part") SchematicPlacementManager.PlacementPart part) {
         if (value instanceof IntBoundingBox box) {
-            IntBoundingBox clipped = SchematicRenderRangeManager.clipPlacementPart(part, box);
-            if (clipped == null) {
-                return false;
+            List<IntBoundingBox> clipped = SchematicRenderRangeManager.clipPlacementParts(part, box);
+            for (IntBoundingBox result : clipped) {
+                original.call(boxes, result);
             }
-            return original.call(boxes, clipped);
+            return !clipped.isEmpty();
         }
         return original.call(boxes, value);
     }

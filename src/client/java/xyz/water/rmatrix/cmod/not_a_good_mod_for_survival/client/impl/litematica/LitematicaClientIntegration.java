@@ -27,8 +27,12 @@ public final class LitematicaClientIntegration {
                 .registerMouseInputHandler(SchematicRenderRangeManager.getInstance());
         fi.dy.masa.malilib.event.RenderEventHandler.getInstance()
                 .registerWorldPreWeatherRenderer(new SchematicRenderRangeRenderer());
+        fi.dy.masa.malilib.event.RenderEventHandler.getInstance()
+                .registerWorldLastRenderer(new SchematicRenderRangeCornerMarkerRenderer());
         Hotkeys.EDIT_HUD.getKeybind().setCallback(new EditHudCallback());
         Hotkeys.EDIT_PROJECTION_RENDER_RANGE.getKeybind().setCallback(new EditProjectionRenderRangeCallback());
+        Hotkeys.CYCLE_RANGE_CORNER_MODE.getKeybind().setCallback(new CycleRangeCornerModeCallback());
+        Hotkeys.RESET_PROJECTION_RENDER_RANGE.getKeybind().setCallback(new ResetProjectionRenderRangeCallback());
     }
 
     private static final class EditHudCallback implements IHotkeyCallback {
@@ -42,6 +46,20 @@ public final class LitematicaClientIntegration {
         @Override
         public boolean onKeyAction(KeyAction action, IKeybind key) {
             return SchematicRenderRangeManager.getInstance().toggleEditor();
+        }
+    }
+
+    private static final class CycleRangeCornerModeCallback implements IHotkeyCallback {
+        @Override
+        public boolean onKeyAction(KeyAction action, IKeybind key) {
+            return SchematicRenderRangeManager.getInstance().cycleCornerEditMode();
+        }
+    }
+
+    private static final class ResetProjectionRenderRangeCallback implements IHotkeyCallback {
+        @Override
+        public boolean onKeyAction(KeyAction action, IKeybind key) {
+            return SchematicRenderRangeManager.getInstance().resetSelectedRangeToProjectionBox();
         }
     }
 }

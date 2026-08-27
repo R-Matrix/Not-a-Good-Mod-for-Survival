@@ -31,12 +31,28 @@ public final class Hotkeys {
             ModEnvironment::isLitematicaLoaded,
             ModEnvironment.LITEMATICA_MOD_ID,
             "Litematica").apply(HOTKEYS_KEY);
+    public static final ConditionalConfigHotkey CYCLE_RANGE_CORNER_MODE = new ConditionalConfigHotkey(
+            "cycleProjectionRangeCornerModeKey",
+            "",
+            "Cycle the projection range corner edit mode between corner picking and expand-to-contain.",
+            ModEnvironment::isLitematicaLoaded,
+            ModEnvironment.LITEMATICA_MOD_ID,
+            "Litematica").apply(HOTKEYS_KEY);
+    public static final ConditionalConfigHotkey RESET_PROJECTION_RENDER_RANGE = new ConditionalConfigHotkey(
+            "resetProjectionRenderRangeKey",
+            "",
+            "Reset the display range of the selected Litematica projection to its full extent.",
+            ModEnvironment::isLitematicaLoaded,
+            ModEnvironment.LITEMATICA_MOD_ID,
+            "Litematica").apply(HOTKEYS_KEY);
 
     /** All hotkeys, including options that are currently unavailable. */
     public static final List<ConfigHotkey> HOTKEY_LIST = ImmutableList.of(
             OPEN_GUI_SETTINGS,
             EDIT_HUD,
-            EDIT_PROJECTION_RENDER_RANGE
+            EDIT_PROJECTION_RENDER_RANGE,
+            CYCLE_RANGE_CORNER_MODE,
+            RESET_PROJECTION_RENDER_RANGE
     );
 
     /** Hotkeys that can actually be registered in the current environment. */

@@ -7,6 +7,7 @@ import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
 import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.config.options.ConfigDouble;
 import fi.dy.masa.malilib.config.options.ConfigInteger;
+import fi.dy.masa.malilib.config.options.ConfigOptionList;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
 
 /** Configuration options that change rendered or visual output. */
@@ -169,14 +170,20 @@ public final class RenderConfigs {
     public static final class SchematicRenderRange {
         public static final ConfigBoolean ENABLE = new ConfigBoolean(
                 "enableSchematicRenderRange", false,
-                "Limit the selected Litematica projection to its saved display range.")
+                "Limit the selected Litematica projection to its saved display range. Easy place, "
+                + "verification and material lists only follow the range while the projection uses the "
+                + "render-layers mode.")
+                .apply(SCHEMATIC_RENDER_RANGE_CONFIG_KEY);
+        public static final ConfigOptionList CORNER_EDIT_MODE = new ConfigOptionList(
+                "schematicRenderRangeCornerEditMode", CornerEditMode.CORNERS,
+                "Interaction mode for adjusting the range corners: corner picking or expand-to-contain.")
                 .apply(SCHEMATIC_RENDER_RANGE_CONFIG_KEY);
         public static final ConfigColor OUTLINE_COLOR = new ConfigColor(
-                "schematicRenderRangeOutlineColor", "#FF55FFFF",
+                "schematicRenderRangeOutlineColor", "#FFFFE100",
                 "Color of the selected projection display-range outline.")
                 .apply(SCHEMATIC_RENDER_RANGE_CONFIG_KEY);
         public static final ConfigColor SURFACE_COLOR = new ConfigColor(
-                "schematicRenderRangeSurfaceColor", "#2055FFFF",
+                "schematicRenderRangeSurfaceColor", "#2AFFE100",
                 "Translucent surface color of the selected projection display range.")
                 .apply(SCHEMATIC_RENDER_RANGE_CONFIG_KEY);
         public static final ConfigDouble OUTLINE_LINE_WIDTH = new ConfigDouble(
@@ -188,12 +195,26 @@ public final class RenderConfigs {
                 return super.getClampedValue(steppedValue);
             }
         }.apply(SCHEMATIC_RENDER_RANGE_CONFIG_KEY);
+        public static final ConfigColor CORNER_1_COLOR = new ConfigColor(
+                "schematicRenderRangeCorner1Color", "#AFFF5555",
+                "Marker color for the first corner of the selected projection display range.")
+                .apply(SCHEMATIC_RENDER_RANGE_CONFIG_KEY);
+        public static final ConfigColor CORNER_2_COLOR = new ConfigColor(
+                "schematicRenderRangeCorner2Color", "#AF55FF55",
+                "Marker color for the second corner of the selected projection display range.")
+                .apply(SCHEMATIC_RENDER_RANGE_CONFIG_KEY);
+        public static CornerEditMode getCornerEditMode() {
+            return (CornerEditMode) CORNER_EDIT_MODE.getOptionListValue();
+        }
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 ENABLE,
+                CORNER_EDIT_MODE,
                 OUTLINE_COLOR,
                 SURFACE_COLOR,
-                OUTLINE_LINE_WIDTH
+                OUTLINE_LINE_WIDTH,
+                CORNER_1_COLOR,
+                CORNER_2_COLOR
         );
 
         private SchematicRenderRange() {
