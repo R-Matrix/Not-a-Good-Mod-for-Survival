@@ -9,7 +9,7 @@
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.config;
 
 /** Describes whether a configuration option can operate in the current environment. */
-public interface ConfigAvailability {
+public interface IConfigAvailability {
     boolean isAvailable();
 
     String getRequiredModId();

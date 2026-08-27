@@ -24,7 +24,7 @@ import fi.dy.masa.malilib.registry.Registry;
 import fi.dy.masa.malilib.util.data.ModInfo;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.GlobalSearchTabTarget;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.IGlobalSearchTabTarget;
 
 /** Builds a searchable snapshot of the Malilib configuration and hotkey registries. */
 public final class GlobalSearchRepository {
@@ -99,7 +99,7 @@ public final class GlobalSearchRepository {
             Supplier<GuiBase> supplier,
             String initialCategory,
             List<ConfigOptionWrapper> wrappers,
-            GlobalSearchTabTarget tabTarget
+            IGlobalSearchTabTarget tabTarget
     ) {
         String category = initialCategory == null || initialCategory.isBlank()
                 ? "Configs" : initialCategory;
@@ -170,7 +170,7 @@ public final class GlobalSearchRepository {
             boolean showSource,
             IConfigBase config,
             IKeybind keybind,
-            GlobalSearchTabTarget tabTarget
+            IGlobalSearchTabTarget tabTarget
     ) {
         if (config == null || modId == null || modName == null) {
             return;

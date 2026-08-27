@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Locale;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.GlobalSearchTabTarget;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.IGlobalSearchTabTarget;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchMetadata;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchSettings;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global_search.ButtonBaseAccessor;
@@ -24,7 +24,7 @@ public final class GlobalSearchNavigation {
     private static IConfigBase targetConfig;
     private static String targetConfigName;
     private static String targetCategory;
-    private static GlobalSearchTabTarget targetTab;
+    private static IGlobalSearchTabTarget targetTab;
     private static boolean active;
     private static boolean targetFound;
     private static boolean targetTabSelected;

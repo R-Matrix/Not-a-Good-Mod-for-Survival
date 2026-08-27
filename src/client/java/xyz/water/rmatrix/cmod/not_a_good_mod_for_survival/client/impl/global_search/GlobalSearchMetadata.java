@@ -1,7 +1,6 @@
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search;
 
 import fi.dy.masa.malilib.config.IConfigBase;
-import fi.dy.masa.malilib.hotkeys.IHotkey;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.util.KeyCodes;
 import fi.dy.masa.malilib.util.StringUtils;
@@ -14,7 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import fi.dy.masa.malilib.gui.GuiBase;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.GlobalSearchTabTarget;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.IGlobalSearchTabTarget;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchSettings;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchText;
 
@@ -26,7 +25,7 @@ public final class GlobalSearchMetadata {
     private Supplier<GuiBase> configScreenSupplier;
     private final boolean showSource;
     private IKeybind keybind;
-    private GlobalSearchTabTarget configTabTarget;
+    private IGlobalSearchTabTarget configTabTarget;
 
     public GlobalSearchMetadata(
             String modId,
@@ -35,7 +34,7 @@ public final class GlobalSearchMetadata {
             Supplier<GuiBase> configScreenSupplier,
             boolean showSource,
             IKeybind keybind,
-            GlobalSearchTabTarget configTabTarget
+            IGlobalSearchTabTarget configTabTarget
     ) {
         this.modId = modId;
         this.modName = modName;
@@ -95,11 +94,11 @@ public final class GlobalSearchMetadata {
         }
     }
 
-    public GlobalSearchTabTarget getConfigTabTarget() {
+    public IGlobalSearchTabTarget getConfigTabTarget() {
         return this.configTabTarget;
     }
 
-    public void setConfigTabTarget(GlobalSearchTabTarget configTabTarget) {
+    public void setConfigTabTarget(IGlobalSearchTabTarget configTabTarget) {
         if (this.configTabTarget == null && configTabTarget != null) {
             this.configTabTarget = configTabTarget;
         }

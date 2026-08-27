@@ -14,10 +14,10 @@ import java.util.function.BooleanSupplier;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.config.ConfigAvailability;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.config.IConfigAvailability;
 
 /** A hotkey whose feature depends on an optional runtime integration. */
-public final class ConditionalConfigHotkey extends ConfigHotkey implements ConfigAvailability {
+public final class ConditionalConfigHotkey extends ConfigHotkey implements IConfigAvailability {
     private final BooleanSupplier availability;
     private final String requiredModId;
     private final String requiredModName;

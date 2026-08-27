@@ -22,7 +22,7 @@ import fi.dy.masa.malilib.gui.GuiBase;
 
 import org.jetbrains.annotations.NotNull;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.config.ConfigAvailability;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.config.IConfigAvailability;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config.tools.ToolConfigs;
 
 /** Resolves availability for local and supported optional-mod configurations. */
@@ -54,7 +54,7 @@ public final class ConfigAvailabilityResolver {
             return true;
         }
 
-        if (config instanceof ConfigAvailability availability) {
+        if (config instanceof IConfigAvailability availability) {
             return availability.isAvailable();
         }
 

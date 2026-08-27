@@ -13,6 +13,8 @@
  */
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global_search;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
 import fi.dy.masa.malilib.gui.widgets.WidgetConfigOption;
 import fi.dy.masa.malilib.gui.widgets.WidgetConfigOptionBase;
@@ -44,7 +46,7 @@ public abstract class WidgetConfigOptionMixin extends WidgetConfigOptionBase<Con
         super(x, y, width, height, parent, entry, listIndex);
     }
 
-    @Redirect(
+    @WrapOperation(
             method = "addConfigOption",
             at = @At(
                     value = "INVOKE",
@@ -52,13 +54,7 @@ public abstract class WidgetConfigOptionMixin extends WidgetConfigOptionBase<Con
                     remap = false),
             remap = false)
     private void notAGoodModForSurvival$createConfigLabel(
-            WidgetConfigOption self,
-            int x,
-            int y,
-            int width,
-            int height,
-            int textColor,
-            String[] lines
+            WidgetConfigOption instance, int x, int y, int width, int height, int textColor, String[] lines, Operation<Void> original
     ) {
         IConfigBase config = this.entry == null ? null : this.entry.getConfig();
 
@@ -66,7 +62,7 @@ public abstract class WidgetConfigOptionMixin extends WidgetConfigOptionBase<Con
             this.addWidget(new ConditionalConfigLabel(
                     x, y, width, height, textColor, lines));
         } else {
-            this.addLabel(x, y, width, height, textColor, lines);
+            original.call(instance, x, y, width, height, textColor, lines);
         }
     }
 

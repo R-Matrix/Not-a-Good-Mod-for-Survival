@@ -28,9 +28,6 @@ public final class ConditionalConfigLabel extends WidgetLabel {
     ) {
         super(x, y, width, height, textColor, displayLines);
 
-        for (int index = 0; index < this.labels.size(); index++) {
-            String line = this.labels.get(index);
-            this.labels.set(index, GuiBase.TXT_DARK_RED + line + GuiBase.TXT_RST);
-        }
+        this.labels.replaceAll(s -> GuiBase.TXT_DARK_RED + s + GuiBase.TXT_RST);
     }
 }

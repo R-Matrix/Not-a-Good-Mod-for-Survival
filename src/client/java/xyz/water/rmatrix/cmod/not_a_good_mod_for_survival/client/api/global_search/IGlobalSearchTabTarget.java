@@ -4,6 +4,6 @@ import fi.dy.masa.malilib.gui.GuiBase;
 
 /** Selects the tab that owns a config on a newly created Malilib screen. */
 @FunctionalInterface
-public interface GlobalSearchTabTarget {
+public interface IGlobalSearchTabTarget {
     boolean select(GuiBase screen);
 }

@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
-import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.GlobalSearchTabTarget;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.IGlobalSearchTabTarget;
 
 /** Best-effort discovery for Malilib screens that expose a nested ConfigGuiTab enum. */
 final class ReflectiveConfigTabCollector {
@@ -336,7 +336,7 @@ final class ReflectiveConfigTabCollector {
 
         void set(Enum<?> tab) throws ReflectiveOperationException;
 
-        GlobalSearchTabTarget createTarget(Enum<?> tab);
+        IGlobalSearchTabTarget createTarget(Enum<?> tab);
     }
 
     private record FieldTabState(Field field, Object target) implements TabState {
@@ -351,7 +351,7 @@ final class ReflectiveConfigTabCollector {
         }
 
         @Override
-        public GlobalSearchTabTarget createTarget(Enum<?> tab) {
+        public IGlobalSearchTabTarget createTarget(Enum<?> tab) {
             return screen -> {
                 Object target = Modifier.isStatic(this.field.getModifiers()) ? null : screen;
 
@@ -384,7 +384,7 @@ final class ReflectiveConfigTabCollector {
         }
 
         @Override
-        public GlobalSearchTabTarget createTarget(Enum<?> tab) {
+        public IGlobalSearchTabTarget createTarget(Enum<?> tab) {
             return screen -> {
                 Object target = Modifier.isStatic(this.setter.getModifiers()) ? null : screen;
 
@@ -408,7 +408,7 @@ final class ReflectiveConfigTabCollector {
     record GlobalSearchTabPage(
             String category,
             List<ConfigOptionWrapper> options,
-            GlobalSearchTabTarget tabTarget
+            IGlobalSearchTabTarget tabTarget
     ) {
         GlobalSearchTabPage {
             category = category == null || category.isBlank() ? "Configs" : category.trim();
