@@ -1,6 +1,9 @@
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.mixin.global_search;
 
+import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import net.minecraft.client.gui.screen.Screen;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -17,11 +20,19 @@ import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global_sear
 /** Adds an explicit back affordance to source config pages opened from global search. */
 @Mixin(GuiBase.class)
 public abstract class GuiBaseMixin {
+
+    @Shadow
+    public abstract Screen getParent();
+
+    @Shadow
+    public abstract <T extends ButtonBase> T addButton(T button, IButtonActionListener listener);
+
     @Inject(method = "onMouseClicked", at = @At("HEAD"))
     private void notAGoodModForSurvival$clearGlobalTargetOnClick(
             int mouseX, int mouseY, int mouseButton, CallbackInfoReturnable<Boolean> cir) {
         GlobalSearchNavigation.onUserAction((GuiBase) (Object) this);
     }
+
 
     @Inject(method = "onMouseScrolled", at = @At("HEAD"))
     private void notAGoodModForSurvival$clearGlobalTargetOnScroll(
@@ -44,9 +55,8 @@ public abstract class GuiBaseMixin {
 
     @Inject(method = "initGui", at = @At("TAIL"))
     private void notAGoodModForSurvival$addGlobalSearchBackButton(CallbackInfo ci) {
-        GuiBase current = (GuiBase) (Object) this;
 
-        if (!(current.getParent() instanceof GuiConfigs)) {
+        if (!(this.getParent() instanceof GuiConfigs)) {
             return;
         }
 
@@ -54,9 +64,9 @@ public abstract class GuiBaseMixin {
                 1, 5, 18, 18, "←",
                 "not-a-good-mod-for-survival.gui.global_search.back");
 
-        current.addButton(backButton, (ButtonBase button, int mouseButton) -> {
+        this.addButton(backButton, (ButtonBase button, int mouseButton) -> {
             if (mouseButton == 0) {
-                MinecraftClient.getInstance().setScreen(current.getParent());
+                MinecraftClient.getInstance().setScreen(this.getParent());
             }
         });
     }

@@ -24,7 +24,6 @@ import net.minecraft.client.gui.DrawContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.config.ConfigAvailabilityResolver;
@@ -35,10 +34,7 @@ import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.config.Cond
 @Mixin(WidgetConfigOption.class)
 public abstract class WidgetConfigOptionMixin extends WidgetConfigOptionBase<ConfigOptionWrapper> {
     protected WidgetConfigOptionMixin(
-            int x,
-            int y,
-            int width,
-            int height,
+            int x, int y, int width, int height,
             WidgetListConfigOptionsBase<?, ?> parent,
             ConfigOptionWrapper entry,
             int listIndex
@@ -48,13 +44,13 @@ public abstract class WidgetConfigOptionMixin extends WidgetConfigOptionBase<Con
 
     @WrapOperation(
             method = "addConfigOption",
-            at = @At(
-                    value = "INVOKE",
+            at = @At(value = "INVOKE",
                     target = "Lfi/dy/masa/malilib/gui/widgets/WidgetConfigOption;addLabel(IIIII[Ljava/lang/String;)V",
                     remap = false),
             remap = false)
     private void notAGoodModForSurvival$createConfigLabel(
-            WidgetConfigOption instance, int x, int y, int width, int height, int textColor, String[] lines, Operation<Void> original
+            WidgetConfigOption instance, int x, int y, int width, int height, int textColor,
+            String[] lines, Operation<Void> original
     ) {
         IConfigBase config = this.entry == null ? null : this.entry.getConfig();
 
@@ -72,20 +68,18 @@ public abstract class WidgetConfigOptionMixin extends WidgetConfigOptionBase<Con
             int mouseY,
             boolean selected,
             DrawContext drawContext,
-            CallbackInfo ci
-    ) {
-        WidgetConfigOption widget = (WidgetConfigOption) (Object) this;
-        ConfigOptionWrapper entry = widget.getEntry();
+            CallbackInfo ci) {
+        ConfigOptionWrapper entry = this.getEntry();
 
         if (entry == null || entry.getConfig() == null ||
                 !GlobalSearchNavigation.shouldHighlight(entry.getConfig())) {
             return;
         }
 
-        int x = widget.getX();
-        int y = widget.getY();
-        int width = widget.getWidth();
-        int height = widget.getHeight();
+        int x = this.getX();
+        int y = this.getY();
+        int width = this.getWidth();
+        int height = this.getHeight();
 
         drawContext.fill(x, y, x + width, y + height, 0x5030A000);
         drawContext.fill(x, y, x + 3, y + height, 0xE0D99000);

@@ -180,6 +180,12 @@ public final class GlobalSearchRepository {
         GlobalSearchMetadata metadata = new GlobalSearchMetadata(
                 modId, modName, category, supplier, showSource, keybind, tabTarget);
 
+        GlobalSearchOption existing = byConfig.get(uniqueKey);
+
+        if (existing != null) {
+            existing.getMetadata().getCategories().forEach(metadata::addCategory);
+        }
+
         // A later tab is usually more specific than an "All" tab, so preserve its source.
         byConfig.put(uniqueKey, new GlobalSearchOption(config, metadata));
     }

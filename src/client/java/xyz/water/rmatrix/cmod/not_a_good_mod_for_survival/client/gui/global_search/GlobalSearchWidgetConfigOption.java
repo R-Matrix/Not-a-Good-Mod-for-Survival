@@ -48,7 +48,7 @@ public final class GlobalSearchWidgetConfigOption extends WidgetConfigOption {
     ) {
         super(x, y, width, height, labelWidth, configWidth, wrapper, listIndex, host, parent);
         this.globalWrapper = wrapper;
-        this.configName = wrapper.getConfig().getConfigGuiDisplayName();
+        this.configName = wrapper.getConfig() == null ? "Unknown config" : wrapper.getConfig().getConfigGuiDisplayName();
         this.highlightTerms = List.copyOf(highlightTerms);
 
         // WidgetConfigOption adds the visible name first. Remove only that label;
@@ -56,7 +56,7 @@ public final class GlobalSearchWidgetConfigOption extends WidgetConfigOption {
         this.subWidgets.removeIf(widget -> widget instanceof WidgetLabel);
         this.replaceCommentHoverWidget();
 
-        if (wrapper.getMetadata().getConfigScreenSupplier() != null) {
+        if (wrapper.getMetadata().getConfigScreenSupplier() != null && !wrapper.getMetadata().hasExternalSource()) {
             this.addWidget(new GlobalSearchJumpWidget(
                     this.x + this.width - 14, this.y + 1, 14, 20,
                     wrapper.getMetadata(), wrapper.getConfig()));

@@ -66,6 +66,10 @@ public final class GlobalSearchMetadata {
         }
     }
 
+    public Set<String> getCategories() {
+        return Set.copyOf(this.categories);
+    }
+
     public boolean shouldShowSource() {
         return this.showSource && GlobalSearchSettings.isSourceDisplayEnabled();
     }

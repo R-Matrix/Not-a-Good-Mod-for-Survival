@@ -1,7 +1,7 @@
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config;
 
 import com.google.common.collect.ImmutableList;
-import fi.dy.masa.malilib.config.options.ConfigHotkey;S
+import fi.dy.masa.malilib.config.options.ConfigHotkey;
 
 import java.util.List;
 
