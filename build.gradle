@@ -69,6 +69,10 @@ dependencies {
 	// Used by the global Malilib search to index Chinese config text by pinyin.
 	implementation "com.belerweb:pinyin4j:2.5.1"
 	include "com.belerweb:pinyin4j:2.5.1"
+
+	// JUnit 5 backs the standalone global-search key matching tests under src/test.
+	testImplementation "org.junit.jupiter:junit-jupiter:5.11.0"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.11.0"
 }
 
 processResources {
@@ -92,6 +96,15 @@ java {
 
 	sourceCompatibility = JavaVersion.VERSION_21
 	targetCompatibility = JavaVersion.VERSION_21
+}
+
+// The src/test suite verifies client-side helpers that have no Minecraft dependency,
+// so it only needs the client classes themselves on its classpath.
+sourceSets.test.compileClasspath += sourceSets.client.output
+sourceSets.test.runtimeClasspath += sourceSets.client.output
+
+tasks.withType(Test).configureEach {
+	useJUnitPlatform()
 }
 
 jar {

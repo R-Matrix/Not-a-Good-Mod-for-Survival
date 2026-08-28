@@ -6,7 +6,6 @@ import fi.dy.masa.malilib.gui.widgets.WidgetConfigOption;
 import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptions;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search.GlobalSearchOption;
@@ -60,17 +59,6 @@ public final class GlobalSearchWidgetListConfigOptions extends WidgetListConfigO
                 this.listContents.add(entry);
             }
         }
-    }
-
-    @Override
-    protected Comparator<ConfigOptionWrapper> getComparator() {
-        return Comparator.comparing(entry -> {
-            if (entry instanceof GlobalSearchOption globalEntry) {
-                return globalEntry.getMetadata().getModName() + "\u0000" + entry.getConfig().getName();
-            }
-
-            return entry.getConfig().getName();
-        }, String.CASE_INSENSITIVE_ORDER);
     }
 
     @Override

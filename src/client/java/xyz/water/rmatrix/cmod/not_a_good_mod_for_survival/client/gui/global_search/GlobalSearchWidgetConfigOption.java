@@ -8,7 +8,9 @@
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.gui.global_search;
 
 import java.util.List;
+import java.util.Optional;
 
+import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetConfigOption;
@@ -48,7 +50,7 @@ public final class GlobalSearchWidgetConfigOption extends WidgetConfigOption {
     ) {
         super(x, y, width, height, labelWidth, configWidth, wrapper, listIndex, host, parent);
         this.globalWrapper = wrapper;
-        this.configName = wrapper.getConfig() == null ? "Unknown config" : wrapper.getConfig().getConfigGuiDisplayName();
+        this.configName = Optional.ofNullable(wrapper.getConfig()).map(IConfigBase::getConfigGuiDisplayName).orElse("Unknown Config");
         this.highlightTerms = List.copyOf(highlightTerms);
 
         // WidgetConfigOption adds the visible name first. Remove only that label;

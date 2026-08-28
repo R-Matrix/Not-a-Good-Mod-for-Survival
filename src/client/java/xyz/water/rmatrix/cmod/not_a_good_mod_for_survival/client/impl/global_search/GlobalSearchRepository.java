@@ -1,12 +1,6 @@
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -241,11 +235,8 @@ public final class GlobalSearchRepository {
                     mod.getMetadata().getName().equalsIgnoreCase(categoryModName)) {
                 ModInfo registered = registeredScreens.get(mod.getMetadata().getId().toLowerCase(Locale.ROOT));
 
-                if (registered != null) {
-                    return registered;
-                }
+                return Objects.requireNonNullElseGet(registered, () -> new ModInfo(mod.getMetadata().getId(), mod.getMetadata().getName()));
 
-                return new ModInfo(mod.getMetadata().getId(), mod.getMetadata().getName());
             }
         }
 
