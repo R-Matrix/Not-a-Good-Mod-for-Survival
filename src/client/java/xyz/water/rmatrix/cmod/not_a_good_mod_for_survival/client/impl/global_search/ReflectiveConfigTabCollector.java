@@ -4,8 +4,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -14,9 +17,13 @@ import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.IGlobalSearchTabTarget;
 
-/** Best-effort discovery for Malilib screens that expose a nested ConfigGuiTab enum. */
+/** Best-effort discovery for Malilib screens whose tab-like enum drives getConfigs(). */
 final class ReflectiveConfigTabCollector {
     private static final String TAB_ENUM_NAME = "ConfigGuiTab";
+    private static final int MAX_GENERIC_TABS = 64;
+    private static final Set<String> GENERIC_SCAN_BLOCKED_PREFIXES = Set.of(
+            "java.", "javax.", "jdk.", "sun.", "net.minecraft.", "fi.dy.masa.",
+            "com.mojang.", "org.", "net.fabricmc.", "com.google.", "it.unimi.");
 
     private ReflectiveConfigTabCollector() {
     }
@@ -38,18 +45,17 @@ final class ReflectiveConfigTabCollector {
     ) {
         Class<?> screenType = screen.getClass();
         Class<?> tabType = findTabType(screenType);
+        TabState state = tabType != null ? findTabState(screen, screenType, tabType) : null;
 
-        if (tabType == null) {
-            return false;
+        if (state == null) {
+            state = findGenericTabState(screen, screenType);
         }
-
-        TabState state = findTabState(screen, screenType, tabType);
 
         if (state == null) {
             return false;
         }
 
-        Object[] constants = tabType.getEnumConstants();
+        Object[] constants = state.tabType().getEnumConstants();
 
         if (constants == null || constants.length == 0) {
             return false;
@@ -190,7 +196,7 @@ final class ReflectiveConfigTabCollector {
             return null;
         }
 
-        return new MethodTabState(getter, setter, getterStatic ? null : instance);
+        return new MethodTabState(getter, setter, getterStatic ? null : instance, tabType);
     }
 
     private static TabState findFieldState(
@@ -235,7 +241,8 @@ final class ReflectiveConfigTabCollector {
             return null;
         }
 
-        return new FieldTabState(bestField, Modifier.isStatic(bestField.getModifiers()) ? null : instance);
+        return new FieldTabState(bestField,
+                Modifier.isStatic(bestField.getModifiers()) ? null : instance, tabType);
     }
 
     private static Set<String> getPossibleStateHolders(Class<?> screenType) {
@@ -300,6 +307,167 @@ final class ReflectiveConfigTabCollector {
         return normalized.contains("tab") ? 50 : 0;
     }
 
+    private static TabState findGenericTabState(GuiConfigsBase screen, Class<?> screenType) {
+        for (FieldPath path : collectEnumFieldPaths(screenType)) {
+            Class<?> enumType = path.terminal().getType();
+            Object[] constants = enumType.getEnumConstants();
+
+            if (constants == null || constants.length < 2 || constants.length > MAX_GENERIC_TABS) {
+                continue;
+            }
+
+            if ((path.holder() != null && !makeAccessible(path.holder())) ||
+                    !makeAccessible(path.terminal())) {
+                continue;
+            }
+
+            if (!validateTabPath(screen, path, constants)) {
+                continue;
+            }
+
+            NotAGoodModForSurvival.LOGGER.debug(
+                    "Detected generic config tab enum {} for {}.",
+                    enumType.getName(), screenType.getName());
+            return new PathTabState(path.holder(), path.terminal(), enumType, screen);
+        }
+
+        return null;
+    }
+
+    private static List<FieldPath> collectEnumFieldPaths(Class<?> screenType) {
+        List<FieldPath> paths = new ArrayList<>();
+        String modPackage = getModPackage(screenType);
+
+        for (Class<?> type = screenType;
+             type != null && type != Object.class && type != GuiConfigsBase.class;
+             type = type.getSuperclass()) {
+
+            for (Field field : type.getDeclaredFields()) {
+                if (isGenericEnumTerminal(field)) {
+                    paths.add(new FieldPath(null, field));
+                }
+            }
+
+            for (Field holder : type.getDeclaredFields()) {
+                if (holder.isSynthetic() || !Modifier.isStatic(holder.getModifiers()) ||
+                        !isPlausibleHolder(holder.getType(), modPackage)) {
+                    continue;
+                }
+
+                for (Field inner : holder.getType().getDeclaredFields()) {
+                    if (isGenericEnumTerminal(inner)) {
+                        paths.add(new FieldPath(holder, inner));
+                    }
+                }
+            }
+        }
+
+        return paths;
+    }
+
+    private static boolean isGenericEnumTerminal(Field field) {
+        return !field.isSynthetic() &&
+                !Modifier.isFinal(field.getModifiers()) &&
+                field.getType().isEnum() &&
+                !isBlockedType(field.getType()) &&
+                containsTabOrCategory(field.getName());
+    }
+
+    private static boolean isPlausibleHolder(Class<?> holderType, String modPackage) {
+        if (holderType.isEnum() || holderType.isArray() || holderType.isPrimitive()) {
+            return false;
+        }
+
+        String packageName = holderType.getPackageName();
+
+        return !packageName.isEmpty() &&
+                (packageName.equals(modPackage) || packageName.startsWith(modPackage + ".")) &&
+                !isBlockedType(holderType);
+    }
+
+    private static boolean isBlockedType(Class<?> type) {
+        String name = type.getName();
+
+        for (String prefix : GENERIC_SCAN_BLOCKED_PREFIXES) {
+            if (name.startsWith(prefix)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static String getModPackage(Class<?> screenType) {
+        String packageName = screenType.getPackageName();
+        int guiPackageIndex = packageName.lastIndexOf(".gui");
+
+        return guiPackageIndex >= 0 ? packageName.substring(0, guiPackageIndex) : packageName;
+    }
+
+    private static boolean containsTabOrCategory(String name) {
+        String normalized = name.toLowerCase(Locale.ROOT);
+
+        return normalized.contains("tab") || normalized.contains("category");
+    }
+
+    private static boolean validateTabPath(
+            GuiConfigsBase screen,
+            FieldPath path,
+            Object[] constants
+    ) {
+        Object holder;
+        Object original;
+
+        try {
+            holder = resolvePathHolder(screen, path.holder(), path.terminal());
+            original = path.terminal().get(holder);
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError exception) {
+            return false;
+        }
+
+        Set<String> pageSignatures = new HashSet<>();
+        int nonEmptyPages = 0;
+
+        try {
+            for (Object constant : constants) {
+                path.terminal().set(holder, constant);
+
+                List<String> names = new ArrayList<>();
+
+                for (ConfigOptionWrapper wrapper : screen.getConfigs()) {
+                    names.add(wrapper.getConfig() == null ? "" : wrapper.getConfig().getName());
+                }
+
+                if (!names.isEmpty()) {
+                    nonEmptyPages++;
+                    pageSignatures.add(String.join("\u0000", names));
+                }
+            }
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError exception) {
+            return false;
+        } finally {
+            try {
+                path.terminal().set(holder, original);
+            } catch (ReflectiveOperationException | RuntimeException | LinkageError exception) {
+                NotAGoodModForSurvival.LOGGER.trace(
+                        "Could not restore a generic config tab probe value on {}.",
+                        screen.getClass().getName(), exception);
+            }
+        }
+
+        return nonEmptyPages >= 2 && pageSignatures.size() >= 2;
+    }
+
+    private static Object resolvePathHolder(Object screen, Field holderField, Field terminalField)
+            throws ReflectiveOperationException {
+        if (holderField == null) {
+            return Modifier.isStatic(terminalField.getModifiers()) ? null : screen;
+        }
+
+        Object base = Modifier.isStatic(holderField.getModifiers()) ? null : screen;
+        return holderField.get(base);
+    }
+
     private static String getTabName(Enum<?> tab) {
         Class<?> tabType = tab.getDeclaringClass();
 
@@ -332,6 +500,8 @@ final class ReflectiveConfigTabCollector {
     }
 
     private interface TabState {
+        Class<?> tabType();
+
         Enum<?> get() throws ReflectiveOperationException;
 
         void set(Enum<?> tab) throws ReflectiveOperationException;
@@ -339,7 +509,7 @@ final class ReflectiveConfigTabCollector {
         IGlobalSearchTabTarget createTarget(Enum<?> tab);
     }
 
-    private record FieldTabState(Field field, Object target) implements TabState {
+    private record FieldTabState(Field field, Object target, Class<?> tabType) implements TabState {
         @Override
         public Enum<?> get() throws IllegalAccessException {
             return (Enum<?>) this.field.get(this.target);
@@ -372,7 +542,12 @@ final class ReflectiveConfigTabCollector {
         }
     }
 
-    private record MethodTabState(Method getter, Method setter, Object target) implements TabState {
+    private record MethodTabState(
+            Method getter,
+            Method setter,
+            Object target,
+            Class<?> tabType
+    ) implements TabState {
         @Override
         public Enum<?> get() throws IllegalAccessException, InvocationTargetException {
             return (Enum<?>) this.getter.invoke(this.target);
@@ -403,6 +578,70 @@ final class ReflectiveConfigTabCollector {
                 }
             };
         }
+    }
+
+    private record PathTabState(
+            Field holderField,
+            Field terminalField,
+            Class<?> tabType,
+            GuiConfigsBase scanTarget
+    ) implements TabState {
+        @Override
+        public Enum<?> get() throws ReflectiveOperationException {
+            return (Enum<?>) this.terminalField.get(resolvePathHolder(
+                    this.scanTarget, this.holderField, this.terminalField));
+        }
+
+        @Override
+        public void set(Enum<?> tab) throws ReflectiveOperationException {
+            this.terminalField.set(resolvePathHolder(
+                    this.scanTarget, this.holderField, this.terminalField), tab);
+        }
+
+        @Override
+        public IGlobalSearchTabTarget createTarget(Enum<?> tab) {
+            return screen -> {
+                try {
+                    if (this.holderField != null) {
+                        Object base = Modifier.isStatic(this.holderField.getModifiers())
+                                ? null : screen;
+
+                        if (base != null && !this.holderField.getDeclaringClass().isInstance(base)) {
+                            return false;
+                        }
+
+                        Object holder = this.holderField.get(base);
+
+                        if (holder == null ||
+                                !this.terminalField.getDeclaringClass().isInstance(holder)) {
+                            return false;
+                        }
+
+                        this.terminalField.set(holder, tab);
+                        return true;
+                    }
+
+                    Object target = Modifier.isStatic(this.terminalField.getModifiers())
+                            ? null : screen;
+
+                    if (target != null &&
+                            !this.terminalField.getDeclaringClass().isInstance(target)) {
+                        return false;
+                    }
+
+                    this.terminalField.set(target, tab);
+                    return true;
+                } catch (ReflectiveOperationException | RuntimeException exception) {
+                    NotAGoodModForSurvival.LOGGER.debug(
+                            "Could not select the generic config tab {} on {}.",
+                            tab.name(), screen.getClass().getName(), exception);
+                    return false;
+                }
+            };
+        }
+    }
+
+    private record FieldPath(Field holder, Field terminal) {
     }
 
     record GlobalSearchTabPage(
