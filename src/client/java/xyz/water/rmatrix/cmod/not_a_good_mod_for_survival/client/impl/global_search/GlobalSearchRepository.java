@@ -1,12 +1,6 @@
 package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.impl.global_search;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -29,6 +23,7 @@ import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_sear
 /** Builds a searchable snapshot of the Malilib configuration and hotkey registries. */
 public final class GlobalSearchRepository {
     private static final String LOCAL_MOD_ID = NotAGoodModForSurvival.MOD_ID;
+    private static final GlobalSearchBaselineStore BASELINE_STORE = new GlobalSearchBaselineStore();
     private static List<GlobalSearchOption> entries = List.of();
     private static Set<String> sourceModIds = Set.of();
 
@@ -45,19 +40,92 @@ public final class GlobalSearchRepository {
         entries = List.copyOf(byConfig.values());
         sourceModIds = Collections.unmodifiableSet(new LinkedHashSet<>(
                 entries.stream().map(entry -> entry.getMetadata().getModId()).toList()));
+        captureBaselines();
+    }
+
+    /**
+     * Reports the external mods whose indexed options changed since the last call and
+     * refreshes keybind handling when a bound option was among them.
+     */
+    public static synchronized Set<String> collectChangedExternalModIds() {
+        Map<String, String> currentValues = new HashMap<>();
+
+        for (GlobalSearchOption entry : entries) {
+            currentValues.put(uniqueKey(entry.getMetadata().getModId(), entry.getConfig().getName()),
+                    readValueString(entry));
+        }
+
+        List<String> changedKeys = BASELINE_STORE.diffAndCommit(currentValues);
+
+        if (changedKeys.isEmpty()) {
+            return Set.of();
+        }
+
+        Set<String> externalModIds = new LinkedHashSet<>();
+        boolean keybindChanged = false;
+
+        for (GlobalSearchOption entry : entries) {
+            String key = uniqueKey(entry.getMetadata().getModId(), entry.getConfig().getName());
+
+            if (!changedKeys.contains(key)) {
+                continue;
+            }
+
+            if (entry.getMetadata().getKeybind() != null) {
+                keybindChanged = true;
+            }
+
+            if (entry.getMetadata().hasExternalSource()) {
+                externalModIds.add(entry.getMetadata().getModId());
+            }
+        }
+
+        if (keybindChanged) {
+            InputEventHandler.getKeybindManager().updateUsedKeys();
+        }
+
+        return externalModIds;
+    }
+
+    private static void captureBaselines() {
+        Set<String> liveKeys = new LinkedHashSet<>();
+
+        for (GlobalSearchOption entry : entries) {
+            String key = uniqueKey(entry.getMetadata().getModId(), entry.getConfig().getName());
+            liveKeys.add(key);
+            BASELINE_STORE.recordIfAbsent(key, readValueString(entry));
+        }
+
+        BASELINE_STORE.retainKeys(liveKeys);
+    }
+
+    private static String readValueString(GlobalSearchOption entry) {
+        try {
+            String value = entry.getConfig().getAsJsonElement().toString();
+            IKeybind keybind = entry.getMetadata().getKeybind();
+
+            if (keybind != null) {
+                value = value + "|" + keybind.getKeysDisplayString();
+            }
+
+            return value;
+        } catch (RuntimeException | LinkageError exception) {
+            NotAGoodModForSurvival.LOGGER.debug(
+                    "Could not read a config value snapshot for {}.", entry.getConfig().getName(), exception);
+            return null;
+        }
+    }
+
+    private static String uniqueKey(String modId, String configName) {
+        return modId.toLowerCase(Locale.ROOT) + "\u0000" + configName.toLowerCase(Locale.ROOT);
     }
 
     public static synchronized List<GlobalSearchOption> getEntries() {
         return entries;
     }
 
-    public static synchronized Set<String> getSourceModIds() {
-        return sourceModIds;
-    }
-
     private static void collectRegisteredScreenConfigs(
-            Map<String, GlobalSearchOption> byConfig
-    ) {
+            Map<String, GlobalSearchOption> byConfig) {
         for (ModInfo modInfo : Registry.CONFIG_SCREEN.getAllModsWithConfigScreens()) {
             Supplier<GuiBase> supplier = modInfo.getConfigScreenSupplier();
 
@@ -139,7 +207,7 @@ public final class GlobalSearchRepository {
             return;
         }
 
-        String uniqueKey = modId.toLowerCase(Locale.ROOT) + "\u0000" + config.getName().toLowerCase(Locale.ROOT);
+        String uniqueKey = uniqueKey(modId, config.getName());
 
         GlobalSearchOption existing = byConfig.get(uniqueKey);
 
@@ -176,9 +244,15 @@ public final class GlobalSearchRepository {
             return;
         }
 
-        String uniqueKey = modId.toLowerCase(Locale.ROOT) + "\u0000" + config.getName().toLowerCase(Locale.ROOT);
+        String uniqueKey = uniqueKey(modId, config.getName());
         GlobalSearchMetadata metadata = new GlobalSearchMetadata(
                 modId, modName, category, supplier, showSource, keybind, tabTarget);
+
+        GlobalSearchOption existing = byConfig.get(uniqueKey);
+
+        if (existing != null) {
+            existing.getMetadata().getCategories().forEach(metadata::addCategory);
+        }
 
         // A later tab is usually more specific than an "All" tab, so preserve its source.
         byConfig.put(uniqueKey, new GlobalSearchOption(config, metadata));
@@ -235,11 +309,8 @@ public final class GlobalSearchRepository {
                     mod.getMetadata().getName().equalsIgnoreCase(categoryModName)) {
                 ModInfo registered = registeredScreens.get(mod.getMetadata().getId().toLowerCase(Locale.ROOT));
 
-                if (registered != null) {
-                    return registered;
-                }
+                return Objects.requireNonNullElseGet(registered, () -> new ModInfo(mod.getMetadata().getId(), mod.getMetadata().getName()));
 
-                return new ModInfo(mod.getMetadata().getId(), mod.getMetadata().getName());
             }
         }
 

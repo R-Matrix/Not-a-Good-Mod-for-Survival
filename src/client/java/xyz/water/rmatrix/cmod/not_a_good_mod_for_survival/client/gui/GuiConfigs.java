@@ -88,15 +88,8 @@ public final class GuiConfigs extends GuiConfigsBase {
     protected void onSettingsChanged() {
         super.onSettingsChanged();
 
-        if (this.selectedTab == ConfigGuiTab.ALL &&
-                ToolConfigs.ENABLE_GLOBAL_MALILIB_SEARCH.getBooleanValue()) {
-            for (String modId : GlobalSearchRepository.getSourceModIds()) {
-                if (!NotAGoodModForSurvival.MOD_ID.equalsIgnoreCase(modId)) {
-                    ConfigManager.getInstance().onConfigsChanged(modId);
-                }
-            }
-
-            ((ConfigManager) ConfigManager.getInstance()).saveAllConfigs();
+        for (String modId : GlobalSearchRepository.collectChangedExternalModIds()) {
+            ConfigManager.getInstance().onConfigsChanged(modId);
         }
     }
 

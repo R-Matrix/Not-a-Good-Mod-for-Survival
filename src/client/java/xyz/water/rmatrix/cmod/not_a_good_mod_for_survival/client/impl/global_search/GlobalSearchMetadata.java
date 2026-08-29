@@ -5,7 +5,6 @@ import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.util.KeyCodes;
 import fi.dy.masa.malilib.util.StringUtils;
 import java.util.LinkedHashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -14,6 +13,7 @@ import net.minecraft.client.gui.screen.Screen;
 import fi.dy.masa.malilib.gui.GuiBase;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.NotAGoodModForSurvival;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.global_search.IGlobalSearchTabTarget;
+import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchKeyMatcher;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchSettings;
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.util.global_search.GlobalSearchText;
 
@@ -64,6 +64,10 @@ public final class GlobalSearchMetadata {
         if (category != null && !category.isBlank()) {
             this.categories.add(category.trim());
         }
+    }
+
+    public Set<String> getCategories() {
+        return Set.copyOf(this.categories);
     }
 
     public boolean shouldShowSource() {
@@ -127,12 +131,8 @@ public final class GlobalSearchMetadata {
             return false;
         }
 
-        String wanted = normalizeKeyName(query);
-
         for (Integer key : this.keybind.getKeys()) {
-            String keyName = KeyCodes.getNameForKey(key);
-
-            if (keyName != null && normalizeKeyName(keyName).equals(wanted)) {
+            if (GlobalSearchKeyMatcher.matches(query, KeyCodes.getNameForKey(key))) {
                 return true;
             }
         }
@@ -174,10 +174,6 @@ public final class GlobalSearchMetadata {
         }
 
         return screen;
-    }
-
-    private static String normalizeKeyName(String keyName) {
-        return keyName.replaceAll("[^A-Za-z0-9]", "").toLowerCase(Locale.ROOT);
     }
 
 }

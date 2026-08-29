@@ -89,11 +89,11 @@ public final class GlobalSearchNavigation {
             return;
         }
 
-        List<ButtonBase> buttons = ((GuiBaseAccessor) (Object) screen)
+        List<ButtonBase> buttons = ((GuiBaseAccessor) screen)
                 .notAGoodModForSurvival$getButtons();
 
         for (ButtonBase button : buttons) {
-            String displayString = ((ButtonBaseAccessor) (Object) button)
+            String displayString = ((ButtonBaseAccessor) button)
                     .notAGoodModForSurvival$getDisplayString();
 
             if (wantedCategory.equals(normalize(displayString))) {
