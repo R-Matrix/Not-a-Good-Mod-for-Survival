@@ -58,7 +58,7 @@ public final class GlobalSearchWidgetConfigOption extends WidgetConfigOption {
         this.subWidgets.removeIf(widget -> widget instanceof WidgetLabel);
         this.replaceCommentHoverWidget();
 
-        if (wrapper.getMetadata().getConfigScreenSupplier() != null && !wrapper.getMetadata().hasExternalSource()) {
+        if (wrapper.getMetadata().getConfigScreenSupplier() != null && wrapper.getMetadata().hasExternalSource()) {
             this.addWidget(new GlobalSearchJumpWidget(
                     this.x + this.width - 14, this.y + 1, 14, 20,
                     wrapper.getMetadata(), wrapper.getConfig()));
