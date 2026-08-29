@@ -28,7 +28,7 @@ public final class GlobalSearchText {
     }
 
     public static boolean contains(String source, String query) {
-        return !findMatches(source, query, GlobalSearchSettings.isPinyinSearchEnabled()).isEmpty();
+        return hasMatch(source, query, GlobalSearchSettings.isPinyinSearchEnabled());
     }
 
     /**
@@ -51,11 +51,44 @@ public final class GlobalSearchText {
         if (enablePinyin && isPinyinQuery(normalizedQuery)) {
             SearchForms forms = FORMS_CACHE.computeIfAbsent(source, GlobalSearchText::createSearchForms);
             String pinyinQuery = normalizePinyinQuery(normalizedQuery);
-            addPinyinMatches(forms.tokens(), pinyinQuery, false, matches);
-            addPinyinMatches(forms.tokens(), pinyinQuery, true, matches);
+            searchPinyinMatches(forms.tokens(), pinyinQuery, false, matches);
+            searchPinyinMatches(forms.tokens(), pinyinQuery, true, matches);
         }
 
         return mergeMatches(matches);
+    }
+
+    /** Existence-only counterpart of {@link #findMatches} that stops at the first hit. */
+    public static boolean hasMatch(String source, String query, boolean enablePinyin) {
+        if (source == null || source.isEmpty() || query == null || query.isBlank()) {
+            return false;
+        }
+
+        String normalizedQuery = query.toLowerCase(Locale.ROOT);
+
+        if (hasDirectMatch(source, normalizedQuery)) {
+            return true;
+        }
+
+        if (enablePinyin && isPinyinQuery(normalizedQuery)) {
+            SearchForms forms = FORMS_CACHE.computeIfAbsent(source, GlobalSearchText::createSearchForms);
+            String pinyinQuery = normalizePinyinQuery(normalizedQuery);
+
+            return searchPinyinMatches(forms.tokens(), pinyinQuery, false, null)
+                    || searchPinyinMatches(forms.tokens(), pinyinQuery, true, null);
+        }
+
+        return false;
+    }
+
+    private static boolean hasDirectMatch(String source, String query) {
+        for (int start = 0; start <= source.length() - query.length(); start++) {
+            if (source.regionMatches(true, start, query, 0, query.length())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static void addDirectMatches(String source, String query, List<Match> matches) {
@@ -66,14 +99,19 @@ public final class GlobalSearchText {
         }
     }
 
-    private static void addPinyinMatches(
+    /**
+     * Searches pinyin spans. A null {@code matches} list selects existence-only mode where
+     * the first completed match short-circuits the whole traversal; otherwise every match
+     * is collected and the traversal always runs to completion.
+     */
+    private static boolean searchPinyinMatches(
             List<PinyinToken> tokens,
             String query,
             boolean initials,
             List<Match> matches
     ) {
         if (query.isEmpty()) {
-            return;
+            return false;
         }
 
         for (int tokenIndex = 0; tokenIndex < tokens.size(); tokenIndex++) {
@@ -88,15 +126,19 @@ public final class GlobalSearchText {
                         continue;
                     }
 
-                    matchPinyin(
+                    if (matchPinyin(
                             tokens, query, initials, tokenIndex, pronunciationIndex, characterOffset,
-                            0, token.sourceStart(), new HashSet<>(), matches);
+                            0, token.sourceStart(), new HashSet<>(), matches)) {
+                        return true;
+                    }
                 }
             }
         }
+
+        return false;
     }
 
-    private static void matchPinyin(
+    private static boolean matchPinyin(
             List<PinyinToken> tokens,
             String query,
             boolean initials,
@@ -109,21 +151,21 @@ public final class GlobalSearchText {
             List<Match> matches
     ) {
         if (tokenIndex >= tokens.size()) {
-            return;
+            return false;
         }
 
         PinyinMatchState state = new PinyinMatchState(
                 tokenIndex, pronunciationIndex, characterOffset, queryOffset);
 
         if (!visited.add(state)) {
-            return;
+            return false;
         }
 
         PinyinToken token = tokens.get(tokenIndex);
         List<String> pronunciations = initials ? token.initials() : token.pinyins();
 
         if (pronunciationIndex >= pronunciations.size()) {
-            return;
+            return false;
         }
 
         String pronunciation = pronunciations.get(pronunciationIndex);
@@ -132,19 +174,23 @@ public final class GlobalSearchText {
 
         if (charactersToMatch <= 0 || !pronunciation.regionMatches(
                 characterOffset, query, queryOffset, charactersToMatch)) {
-            return;
+            return false;
         }
 
         int nextQueryOffset = queryOffset + charactersToMatch;
         int nextCharacterOffset = characterOffset + charactersToMatch;
 
         if (nextQueryOffset == query.length()) {
+            if (matches == null) {
+                return true;
+            }
+
             matches.add(new Match(sourceStart, token.sourceEnd()));
-            return;
+            return false;
         }
 
         if (nextCharacterOffset < pronunciation.length() || tokenIndex + 1 >= tokens.size()) {
-            return;
+            return false;
         }
 
         PinyinToken nextToken = tokens.get(tokenIndex + 1);
@@ -153,10 +199,14 @@ public final class GlobalSearchText {
         for (int nextPronunciationIndex = 0;
              nextPronunciationIndex < nextPronunciations.size();
              nextPronunciationIndex++) {
-            matchPinyin(
+            if (matchPinyin(
                     tokens, query, initials, tokenIndex + 1, nextPronunciationIndex, 0,
-                    nextQueryOffset, sourceStart, visited, matches);
+                    nextQueryOffset, sourceStart, visited, matches)) {
+                return true;
+            }
         }
+
+        return false;
     }
 
     private static List<Match> mergeMatches(List<Match> matches) {
