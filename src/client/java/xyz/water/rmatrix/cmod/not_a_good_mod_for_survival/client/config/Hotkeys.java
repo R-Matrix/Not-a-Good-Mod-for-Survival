@@ -2,6 +2,7 @@ package xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.config;
 
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
+import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 
 import java.util.List;
 
@@ -37,13 +38,22 @@ public final class Hotkeys {
             ModEnvironment::isLitematicaLoaded,
             ModEnvironment.LITEMATICA_MOD_ID,
             "Litematica").apply(HOTKEYS_KEY);
+    public static final ConditionalConfigHotkey PROJECTION_CONTENT_PREVIEW = new ConditionalConfigHotkey(
+            "projectionContentPreviewKey",
+            "LEFT_SHIFT,BUTTON_2",
+            KeybindSettings.PRESS_ALLOWEXTRA,
+            "Preview the content of a projected item frame, or read the book on a projected lectern.",
+            ModEnvironment::isLitematicaLoaded,
+            ModEnvironment.LITEMATICA_MOD_ID,
+            "Litematica").apply(HOTKEYS_KEY);
 
     /** All hotkeys, including options that are currently unavailable. */
     public static final List<ConfigHotkey> HOTKEY_LIST = ImmutableList.of(
             OPEN_GUI_SETTINGS,
             EDIT_PROJECTION_RENDER_RANGE,
             CYCLE_RANGE_CORNER_MODE,
-            RESET_PROJECTION_RENDER_RANGE
+            RESET_PROJECTION_RENDER_RANGE,
+            PROJECTION_CONTENT_PREVIEW
     );
 
     /** Hotkeys that can actually be registered in the current environment. */

@@ -13,6 +13,7 @@ import java.util.function.BooleanSupplier;
 
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
+import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 
 import xyz.water.rmatrix.cmod.not_a_good_mod_for_survival.client.api.config.IConfigAvailability;
 
@@ -30,7 +31,19 @@ public final class ConditionalConfigHotkey extends ConfigHotkey implements IConf
             String requiredModId,
             String requiredModName
     ) {
-        super(name, defaultStorageString, comment);
+        this(name, defaultStorageString, KeybindSettings.DEFAULT, comment, availability, requiredModId, requiredModName);
+    }
+
+    public ConditionalConfigHotkey(
+            String name,
+            String defaultStorageString,
+            KeybindSettings settings,
+            String comment,
+            BooleanSupplier availability,
+            String requiredModId,
+            String requiredModName
+    ) {
+        super(name, defaultStorageString, settings, comment);
         this.availability = Objects.requireNonNull(availability, "availability");
         this.requiredModId = Objects.requireNonNull(requiredModId, "requiredModId");
         this.requiredModName = Objects.requireNonNull(requiredModName, "requiredModName");

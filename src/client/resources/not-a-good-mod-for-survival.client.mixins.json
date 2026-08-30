@@ -25,6 +25,9 @@
 		,"litematica.DataManagerGetRenderLayerRangeMixin"
 		,"litematica.TaskCountBlocksPlacementMixin"
 		,"litematica.OverlayRendererMismatchBatchMixin"
+		,"litematica.WorldUtilsProjectionAidMixin"
+		,"projection.BookEditScreenMixin"
+		,"projection.HandledScreenProjectionHighlightMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
