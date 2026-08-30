@@ -179,7 +179,7 @@
   "not-a-good-mod-for-survival.config.projectionAids.comment.enableSurvivalFrameSupply": "轻松放置或填充投影展示框时，允许从背包把展示框或带组件的内容物换到当前主手；中键对准投影展示框也可按此从背包换到主手。",
   "not-a-good-mod-for-survival.config.projectionAids.name.enableSurvivalFrameSupply": "填充展示框时允许从背包选取",
   "not-a-good-mod-for-survival.config.projectionAids.prettyName.enableProjectionContentHighlight": "高亮投影展示框内容物",
-  "not-a-good-mod-for-survival.config.projectionAids.comment.enableProjectionContentHighlight": "打开容器界面时，准星对准的投影展示框所放置的内容物会在背包中高亮显示（使用 Litematica 拾取高亮颜色）。",
+  "not-a-good-mod-for-survival.config.projectionAids.comment.enableProjectionContentHighlight": "打开容器界面时，准星对准的投影展示框所放置的内容物会在背包中高亮显示 \n（使用 Litematica 拾取高亮颜色）。",
   "not-a-good-mod-for-survival.config.projectionAids.name.enableProjectionContentHighlight": "高亮投影展示框内容物",
   "not-a-good-mod-for-survival.config.hotkeys.prettyName.projectionContentPreviewKey": "投影内容查看键",
   "not-a-good-mod-for-survival.config.hotkeys.comment.projectionContentPreviewKey": "查看投影展示框的内容物，或阅读投影讲台上的书。",
